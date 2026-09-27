@@ -211,6 +211,22 @@ rotation opposée, ce qui l'associe probablement au sens antihoraire ; la trace
 contient ensuite de nouveaux rapports `0x33`. Les deux IDs de rotation restent
 sans état `01` et sont donc des événements, non des transitions d'appui.
 
+### Synthèse de la cartographie des commandes
+
+| Commande physique | ID `ACK` | État observé | Niveau de preuve |
+| --- | --- | --- | --- |
+| Touches principales 1 à 15, de gauche à droite puis de haut en bas | `0x01` à `0x0f`, dans l'ordre | `01` appui, `00` relâchement | Confirmé par C02c et l'ordre donné par l'opérateur |
+| Bouton séparé supérieur gauche | `0x1e` | `01` / `00` | Confirmé par la séquence C02c |
+| Bouton séparé supérieur, deuxième dans l'ordre | `0x1f` | `01` / `00` | Confirmé par la séquence C02c |
+| Clic de molette | `0x23` | `01` / `00` | Confirmé en C02d |
+| Rotation horaire | `0x33` | Rapports événementiels `00` | Confirmé comme premier sens en C02d |
+| Rotation antihoraire | `0x32` | Rapports événementiels `00` | Probable : apparaît dans la phase opposée en C02d |
+
+Les IDs `0x32` et `0x33` décrivent des événements de rotation, pas des états
+maintenus. C02d contient aussi des rapports `0x33` après les rapports `0x32` ;
+la capture confirme le premier sens horaire, mais ne documente pas assez
+finement les gestes pour lever toute ambiguïté sur chaque inversion.
+
 ## Capture d'images locale C03 du 27 septembre 2026
 
 La capture déclarée pour les changements d'image a été faite avec VSD Craft sous
