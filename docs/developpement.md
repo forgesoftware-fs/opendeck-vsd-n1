@@ -45,7 +45,7 @@ la version de travail actuelle.
 
 Le relevé sysfs consigné dans [l'investigation du protocole](protocole.md)
 identifie l'interface candidate `0xFFA0:1` et l'interface clavier séparée. C01
-documente l'énumération ; C02–C03c montrent VSD Craft sous Proton échangeant
+documente l'énumération ; C02–C04 montrent VSD Craft sous Proton échangeant
 avec l'interface candidate, avec des réponses de type `ACK` et des images JPEG.
 C03c confirme le transfert puis l'affichage sur le N1 des images A puis B via
 « Change Icon » et relie la cible `0x01` à la première case. C02c associe les
@@ -69,7 +69,10 @@ standard sur `0x81` lorsque VSD Craft était fermé. C02c relève au contraire l
 deux boutons du haut et le clic de molette sont identifiés par l'ordre des
 gestes. C02d confirme que le clic donne `0x23/01` puis `0x23/00` et que la
 première rotation horaire produit `0x33/00`; `0x32/00` apparaît dans la phase
-opposée.
+opposée. C04 ajoute 38 rapports `0x32/00` et 39 `0x33/00` lors d'un aller-retour
+de molette ; l'opérateur confirme que la luminosité a changé visiblement, bien
+qu'aucune commande `LIG` ne figure dans la trace. Le lien entre `LIG` et l'effet
+physique reste à tester séparément.
 
 ## Identité du fork
 
@@ -127,7 +130,7 @@ flowchart LR
 | Jalon | Travail | Condition de sortie |
 | --- | --- | --- |
 | J0 — Préparation | Renommer le fork, préserver provenance et licence, adapter l'assemblage | **Configuré** ; valider unicité et import avant diffusion ; aucune annonce de compatibilité N1 |
-| J1 — Observation | Inventorier le N1, capturer initialisation, boutons, image et luminosité disponible | **En cours** : captures C01–C03c/C02b–C02d et comparaison à `mirajazz 0.16.2` consignées ; restent à confirmer le sens de `0x32`, `QUCMD` et les effets physiques des commandes |
+| J1 — Observation | Inventorier le N1, capturer initialisation, boutons, image et luminosité disponible | **En cours** : captures C01–C04/C02b–C02d et comparaison à `mirajazz 0.16.2` consignées ; restent à confirmer le sens de `0x32`, `QUCMD` et l'effet physique de `LIG` ; C04 confirme l'effet de la molette, sans en montrer la commande |
 | J2 — Prototype boutons | Réaliser une intégration expérimentale isolée ; ouvrir l'interface et transmettre les appuis | Détection unique et correspondance correcte des boutons dans OpenDeck |
 | J3 — Prototype image | Implémenter le format, le découpage et l'envoi observés | Image lisible, orientée et adressée correctement sur une touche |
 | J4 — Livraison Bazzite | Stabiliser reconnexion, archive, règle udev et installation | Recette native réussie et résultat Flatpak documenté séparément |

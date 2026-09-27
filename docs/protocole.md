@@ -77,8 +77,8 @@ Il n'établit aucune commande d'initialisation, aucun événement de bouton et a
 format d'image. Lors de ce premier relevé, `lsusb` n'a pas pu initialiser libusb
 dans l'environnement d'analyse (`-99`) et aucun nœud `/dev/hidraw*` n'y était
 exposé ; la lecture sysfs a fourni les descripteurs USB et HID. Les captures
-usbmon C01–C03c et C02b décrites ci-dessous ont ensuite été réalisées sur l'hôte
-Bazzite.
+usbmon C01–C04 et C02b–C02d décrites ci-dessous ont ensuite été réalisées sur
+l'hôte Bazzite.
 Le jalon J1 reste ouvert.
 
 ## Première capture usbmon locale du 27 septembre 2026
@@ -320,10 +320,10 @@ la disposition ou le rendu d'image de cette variante.
 
 Le couple cible `0x01` / première case en haut à gauche est donc établi sur cet
 exemplaire. D'autres valeurs de cible, de `0x02` à `0x11`, apparaissent dans la
-capture, mais leurs positions ne sont pas relevées. Les valeurs `0x0d` et `0x0f`
-coïncident avec deux codes d'événement C02 ; leur correspondance physique reste
-à vérifier. Cette capture ne valide ni l'initialisation, ni les boutons, ni
-l'intégration OpenDeck ; J1 reste en cours.
+capture, mais leurs positions ne sont pas relevées. C02c associe aussi les cibles
+`0x0d` et `0x0f` aux 13e et 15e touches principales ; les autres cibles d'image
+n'ont pas été reliées à une position. Cette capture ne valide ni l'initialisation,
+ni les boutons, ni l'intégration OpenDeck ; J1 reste en cours.
 
 ## Images de référence utilisées sous Proton
 
@@ -374,6 +374,24 @@ codes reçus. Garder une copie originale des traces ; documenter les filtres
 utilisés pour les extraits partagés. Une capture de bus peut inclure d'autres
 périphériques : limiter les extraits diffusés au matériel étudié.
 
+## Molette et luminosité C04 du 28 septembre 2026
+
+La trace `C04-brightness-stream.pcapng` (nom conservé tel qu'enregistré), stockée
+hors du dépôt dans `/tmp/opendeck-vsd-n1-captures/`, contient 66 498 paquets sur
+33,815681 secondes, sans perte signalée. Le N1 est sur le bus 1, adresse 26.
+L'opérateur précise avoir tourné la molette du N1 dans les deux sens ; il ne
+s'agissait pas de déplacer un réglage dans VSD Craft. Il confirme que la
+luminosité de l'écran a visiblement changé pendant cette manipulation.
+
+Sur l'endpoint de commandes `0x03` OUT, les en-têtes détectés sont sept `BAT` et
+six `STP`, sans commande `LIG`. L'endpoint `0x82` IN contient un appui-relâchement
+`0x23` (`01`, puis `00`), 38 rapports `0x32/00` et 39 rapports `0x33/00` ; aucun
+rapport clavier n'apparaît sur `0x81`. C04 documente donc une activité de clic et
+de rotation de la molette ; la variation physique de luminosité est confirmée par
+l'opérateur. L'absence de `LIG` signifie que cette trace ne relie pas cet effet à
+la commande `set_brightness` ni à une valeur précise. Le mécanisme, l'échelle et
+le sens attribué à `0x32` restent à qualifier.
+
 ## Scénarios à capturer séparément
 
 Fermer OpenDeck et les autres clients du contrôleur pendant les captures de VSD
@@ -388,7 +406,7 @@ Craft. Pour chaque scénario, noter l'état initial, effectuer une seule opérat
 | C02c / `C02b-button-map-stream-vsd.pcapng` | VSD Craft ouvert et N1 visible ; appuyer sur les touches principales ligne par ligne, puis sur les deux boutons du haut et cliquer la molette | Relier les IDs `ACK` aux commandes physiques |
 | C02d / `C02d-wheel-isolated.pcapng` | Cliquer la molette, faire une rotation horaire puis antihoraire en séparant les gestes par des pauses | ID du clic, IDs et sens des rotations |
 | C03 / `03-image.pcapng` | Changer uniquement l'image d'une touche ; alterner deux images distinctes | En-têtes, position, format, découpage, ordre, validation finale et orientation |
-| C04 / `C04-brightness-stream.pcapng` | VSD Craft ouvert et connecté ; si la commande existe, relever le niveau initial puis choisir minimum, milieu et maximum avec une pause entre chaque | Valeurs affichées, commandes `LIG`, réponses éventuelles et effet visible sur l'écran ; noter l'échelle exacte de l'interface |
+| C04b / `C04b-brightness-stream.pcapng` | VSD Craft ouvert et connecté ; modifier uniquement son réglage de luminosité, avec pauses et valeurs notées | Valeurs affichées, commandes `LIG`, réponses éventuelles et effet visible sur l'écran ; noter l'échelle exacte de l'interface |
 | C05 / `05-options.pcapng` | Si présents, isoler appui maintenu, rotation/appui d'encodeur, veille et réveil | Capacités supplémentaires ; subdiviser en un fichier par fonction |
 
 Pour C03, utiliser les images de référence ci-dessus et conserver leurs noms et
@@ -525,9 +543,9 @@ Produire une table d'analyse avant de choisir la variante :
 | Opération | Capture et trames | Interprétation | Correspondance mirajazz | Confirmation matérielle |
 | --- | --- | --- | --- | --- |
 | Initialisation | C01 : énumération et contrôle seulement ; C02 : `DIS`, `LIG 00 00 41`, `QUCMD`, `CLE`, `MOD`, `CONNECT` | `DIS` et les commandes connues ont des formes correspondantes ; `LIG` est un réglage à 65 ; `QUCMD` inconnue | Partielle | Échanges VSD Craft observés, mais initialisation OpenDeck non testée |
-| Boutons et molette | C02b : 17 paires clavier sur `0x81`, logiciel fermé ; C02c : IDs `0x01`–`0x0f`, `0x1e`, `0x1f`, `0x23` dans l'ordre des gestes ; C02d : `0x23/01` puis `0x23/00`, 20 `0x32/00` et 44 `0x33/00` | IDs de grille ligne par ligne ; `0x1e`/`0x1f` pour les deux boutons du haut, `0x23` pour le clic de molette ; `0x33` horaire et `0x32` probablement antihoraire | Forte pour les 17 boutons et le clic, partielle pour le sens de rotation | C02c/C02d confirment les ACK avec VSD Craft actif ; confirmer le sens de `0x32` et les séquences complètes |
+| Boutons et molette | C02b : 17 paires clavier sur `0x81`, logiciel fermé ; C02c : IDs `0x01`–`0x0f`, `0x1e`, `0x1f`, `0x23` dans l'ordre des gestes ; C02d : clic `0x23` et rotations ; C04 : 38 `0x32/00` et 39 `0x33/00` pendant les deux sens | IDs de grille ligne par ligne ; `0x1e`/`0x1f` pour les deux boutons du haut, `0x23` pour le clic de molette ; `0x33` horaire et `0x32` probablement antihoraire | Forte pour les 17 boutons et le clic, partielle pour le sens de rotation | C02c/C02d/C04 confirment les ACK avec VSD Craft actif ; confirmer le sens de `0x32` et les séquences complètes |
 | Image d'une touche | C03c : `BAT`, longueur u16 BE, cible `0x01`, JPEG A/B, puis `STP` | Correspond à `send_image`/`flush`; cible `0x01` reliée à la première case | Forte pour ce parcours | Oui, confirmation de l'opérateur pour A puis B |
-| Luminosité, si disponible | C02 : `LIG 00 00 41`, forme `set_brightness(65)` | Forme de commande reconnue ; les valeurs 0–100 sont prises en charge par la bibliothèque | Partielle | Effet physique non mesuré ; aucun changement de niveau comparé |
+| Luminosité | C02 : `LIG 00 00 41`, forme `set_brightness(65)` ; C04 : rotation de molette, sans `LIG` et avec variation visible confirmée | La molette modifie visiblement la luminosité ; la trace ne relie pas cet effet à `LIG` ni à une valeur choisie | Partielle | Tester séparément la commande de luminosité dans VSD Craft et relever l'échelle ainsi que les sens de variation |
 
 Une compatibilité démontrée permet de réutiliser la variante concernée. Des écarts
 exigent une adaptation dédiée et des essais ciblés. Si les données restent

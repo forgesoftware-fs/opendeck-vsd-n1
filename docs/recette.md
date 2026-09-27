@@ -1,9 +1,10 @@
 # Plan de recette du Basicolor N1
 
 **État : aucune recette du plugin OpenDeck exécutée.** Les captures matérielles
-exploratoires C01–C03c et C02b–C02d sont consignées dans l'investigation du protocole ;
+exploratoires C01–C04 et C02b–C02d sont consignées dans l'investigation du protocole ;
 C03c confirme le changement d'icône A puis B par VSD Craft et leur affichage sur
-le N1.
+le N1. C04 documente la molette et une variation visible de luminosité rapportée
+par l'opérateur, sans constituer une recette du plugin.
 Cette observation du logiciel constructeur ne remplace pas les contrôles
 d'acceptation ci-dessous et ne constitue pas un rapport de compatibilité du plugin.
 

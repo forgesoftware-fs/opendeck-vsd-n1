@@ -3,8 +3,8 @@
 Ce dossier cadre l'adaptation du fork `opendeck-vsd-n1` pour le contrôleur
 Basicolor N1, identifié dans le besoin par le couple USB `5548:1002`.
 
-**État au 27 septembre 2026 : J0 est implémenté ; J1 est en cours.** Les captures
-C01–C03c et C02b–C02d ont été recueillies sur l'exemplaire local avec Bazzite et
+**État au 28 septembre 2026 : J0 est implémenté ; J1 est en cours.** Les captures
+C01–C04 et C02b–C02d ont été recueillies sur l'exemplaire local avec Bazzite et
 Proton. C03c confirme le transfert des images tests A puis B via « Change Icon »
 et leur affichage sur le N1, d'après l'opérateur. C03b avait été analysée de façon
 incomplète avant de relire le champ HID `usbhid.data`. Ces captures ne valident
@@ -33,15 +33,19 @@ HID. La comparaison au code `mirajazz 0.16.2` montre une structure compatible
 pour l'en-tête et la fin des transferts d'image, ainsi que pour deux champs des
 réponses `ACK`, et retrouve la forme des commandes de luminosité à 65 %,
 d'effacement et de mode 3. `QUCMD` reste inexpliquée ; les dimensions d'image et
-le sens correspondant à `0x32` reste à confirmer. Aucun essai d'acceptation du
-plugin n'a encore été exécuté.
+le sens correspondant à `0x32` restent à confirmer. C04 consigne une rotation de
+molette et l'opérateur confirme une variation visible de la luminosité, sans
+commande `LIG` dans la trace. Aucun essai d'acceptation du plugin n'a encore été
+exécuté.
 
 C02b, avec VSD Craft fermé, contient 17 paires sur le clavier standard `0x81`.
 C02c, avec VSD Craft actif, reçoit les événements propriétaires sur `0x82` :
 les touches de la grille suivent `0x01`–`0x0f`, les deux boutons du haut
 `0x1e` et `0x1f`, et le clic de molette `0x23`. C02d relève `0x33/00` pendant
 la première rotation horaire et `0x32/00` pendant la phase opposée ;
-l'association de `0x32` au sens antihoraire reste à confirmer.
+l'association de `0x32` au sens antihoraire reste à confirmer. C04 ajoute 38
+rapports `0x32/00` et 39 `0x33/00` pendant un aller-retour de la molette. Bien
+que le nom du fichier mentionne la luminosité, aucune commande `LIG` n'y figure.
 
 La première version doit permettre à OpenDeck de détecter le N1, de recevoir les
 appuis sur ses boutons et d'afficher une image sur une touche. La proximité des
@@ -62,10 +66,11 @@ reste à démontrer.
 ## Ordre de travail
 
 1. ~~Préparer l'identité du fork et conserver son historique et sa licence.~~ **J0 fait** ; vérifier l'unicité de l'identité avant diffusion.
-2. ~~Relever les interfaces et recueillir les captures initiales.~~ **C01–C03c
+2. ~~Relever les interfaces et recueillir les captures initiales.~~ **C01–C04
    et C02b–C02d faits ; A/B et la cible `0x01` confirmées sur la première case ;
    IDs des 15 touches, des deux boutons du haut et du clic de molette confirmés** ;
-   terminer la qualification des deux sens de rotation.
+   terminer la qualification des deux sens de rotation et relier la commande
+   `LIG` à son effet physique.
 3. Établir le protocole, puis réaliser une implémentation expérimentale isolée.
 4. Valider détection, boutons et image sur le N1 avant de l'annoncer compatible.
 5. Préparer l'archive et exécuter la recette Bazzite pour chaque mode d'installation.
