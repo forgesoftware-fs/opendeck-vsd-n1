@@ -28,9 +28,10 @@ mais leurs positions physiques restent inconnues. C03b concernait les champs de
 l'action « Ouvrir » et sa première analyse avait ignoré la plupart des rapports
 HID. La comparaison au code `mirajazz 0.16.2` montre une structure compatible
 pour l'en-tête et la fin des transferts d'image, ainsi que pour deux champs des
-réponses `ACK`. Elle laisse des écarts à qualifier (`QUCMD`, `LIG`, dimensions
-et identifiants de bouton). Aucun essai d'acceptation du plugin n'a encore été
-exécuté.
+réponses `ACK`, et retrouve la forme des commandes de luminosité à 65 %,
+d'effacement et de mode 3. `QUCMD` reste inexpliquée ; les dimensions d'image et
+les identifiants de bouton restent à qualifier. Aucun essai d'acceptation du
+plugin n'a encore été exécuté.
 
 La première version doit permettre à OpenDeck de détecter le N1, de recevoir les
 appuis sur ses boutons et d'afficher une image sur une touche. La proximité des

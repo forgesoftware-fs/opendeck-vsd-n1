@@ -113,13 +113,21 @@ Filtrée sur le bus 1 et l'adresse 25, cette trace montre le trafic applicatif s
 l'interface 0 : environ 12 042 transferts sortants de 1 024 octets sur `0x03`,
 ainsi que des réponses entrantes de 512 octets sur `0x82`. Les rapports sortants
 contiennent les marqueurs `DIS`, `LIG`, `QUCMD`, `BAT`, `STP`, `CLE`, `MOD` et
-`CONNECT`. Les noms `DIS`, `CLE`, `MOD`, `CONNECT`, `BAT` et `STP` correspondent
-à des commandes implémentées dans `mirajazz 0.16.2` ; la comparaison détaillée
-est plus bas. `LIG` apparaît avec un octet `0x41` dans son champ de données,
-dont la signification reste inconnue. La commande `QUCMD` suivie de `1f 11` n'a
-pas été retrouvée dans cette version de la bibliothèque. La capture contient
-aussi des blocs JPEG/JFIF `ff d8 ff e0` ; C03c permettra d'associer deux d'entre
-eux aux images de test.
+`CONNECT`. La capture contient aussi des blocs JPEG/JFIF `ff d8 ff e0` ; C03c
+permettra d'associer deux d'entre eux aux images de test.
+
+Les premières commandes applicatives apparaissent à 34,389 s : `DIS`, `LIG`
+avec les données `00 00 41`, `QUCMD 1f 11`, puis un second `LIG` avec la même
+valeur. Dans `mirajazz 0.16.2`, `LIG 00 00 <valeur>` est la commande de luminosité
+de l'écran ; le trafic a donc la forme de `set_brightness(65)`. Cette
+correspondance de données ne constitue pas une mesure de luminosité physique.
+La première commande `BAT` apparaît à 34,568 s : elle annonce `0x1343` octets
+pour la cible `0x12`, puis un `STP` suit à 34,569 s.
+Deux commandes `CLE 00 00 00 ff` suivent à 34,647 s ; le code de la bibliothèque
+utilise la cible `0xff` pour l'effacement global. À 35,408 s, `MOD 00 00 33`
+correspond à son encodage du mode 3. Un `CONNECT` à 44,427 s a la même commande
+que `keep_alive`, mais cette capture ne valide pas une cadence périodique.
+`QUCMD 1f 11` n'a pas été retrouvée dans la source étudiée et reste inexpliquée.
 
 Les réponses observées commencent par `ACK\0\0OK\0\0`. Une réponse contient les
 octets `aa ff`. Dans les quatre réponses suivantes, l'octet d'indice 9 vaut
@@ -380,10 +388,10 @@ soumission et complétion d'une même URB pour éviter de les compter deux fois.
 
 ## Comparer à mirajazz
 
-Le dépôt verrouille `mirajazz 0.16.2`. Les liens vers son
-[code d'envoi et de commandes](https://docs.rs/crate/mirajazz/0.16.2/source/src/device.rs),
-son [lecteur d'événements](https://docs.rs/crate/mirajazz/0.16.2/source/src/state.rs)
-et son [tableau des variantes](https://docs.rs/crate/mirajazz/0.16.2/source/README.md)
+Le dépôt verrouille `mirajazz 0.16.2`. Les liens vers son code épinglé
+[d'envoi et de commandes](https://github.com/4ndv/mirajazz/blob/v0.16.2/src/device.rs),
+son [lecteur d'événements](https://github.com/4ndv/mirajazz/blob/v0.16.2/src/state.rs)
+et son [tableau des variantes](https://github.com/4ndv/mirajazz/blob/v0.16.2/README.md)
 permettent de comparer les octets à la version réellement utilisée. La
 [documentation de mirajazz](https://github.com/4ndv/mirajazz#protocol-versions)
 présente des variantes internes, issues de rétro-ingénierie :
@@ -402,16 +410,21 @@ attribuer une variante complète au N1.
 
 | Élément comparé | Observation N1 | Code `mirajazz 0.16.2` | État |
 | --- | --- | --- | --- |
-| Sorties C02 | `DIS`, `CLE`, `MOD`, `CONNECT`, `BAT`, `STP` | Commandes portant ces marqueurs dans `device.rs` | Correspondance des noms ; ordre complet et effets N1 encore à qualifier |
-| Sortie C02 `LIG` | Champ contenant `0x41` | Initialisation générique présente dans la bibliothèque | Valeur et sémantique N1 à comparer en détail |
+| `DIS` et `LIG` C02 | `DIS`, puis deux `LIG 00 00 41` | `initialize` envoie `DIS` puis `LIG` à zéro ; `set_brightness(65)` envoie `LIG 00 00 41` | `DIS` et format de luminosité reconnus ; séquence différente de l'initialisation générique, effet non mesuré |
+| `CLE`, `MOD` et `CONNECT` C02 | `CLE 00 00 00 ff`, `MOD 00 00 33`, `CONNECT` | Effacement global, `set_mode(3)`, `keep_alive` | Formes correspondantes ; effets physiques et cadence non mesurés |
 | Sortie C02 `QUCMD` | `QUCMD 1f 11` | Non repérée dans le code étudié | Inconnue, à ne pas émettre sans validation |
 | En-tête image | Octet nul supplémentaire `00`, longueur u16 big-endian, cible `01` pour la première case | `send_image` écrit une longueur u16 big-endian et la cible `key + 1` | Correspondance C03c pour la première case |
 | Fin d'image | `STP` après chacune des deux images testées | `flush` envoie `STP` | Correspondance C03c A/B |
 | Événement entrant | Réponse `ACK`; indices 9 et 10 portent `0f/0d` et `01/00` | Le lecteur de variante à deux états prend ID à l'indice 9 et état à l'indice 10 | Structure compatible ; positions N1 non établies |
 | Format et dimensions | JPEG/JFIF observé ; C03 et C03b décodent du 96 × 96 et du 80 × 80 | Le N3 utilise par défaut JPEG 64 × 64 tourné de 90° | Différence à résoudre avant réemploi du rendu |
 
-La capture C02 relève aussi `LIG` deux fois au démarrage et un échange
-`QUCMD 1f 11` qui reste non documenté. Les codes entrants `0x0d` et `0x0f`
+`QUCMD 1f 11` reste non documentée. Dans C02 et C03c, les rapports HID extraits
+par Wireshark et les longueurs USB `usb.data_len` observées valent 1 024 octets.
+La source `mirajazz` construit des tampons de 1 025 octets en incluant l'octet
+d'identifiant de rapport nul, alors que la capture USB expose la longueur
+transférée à une couche différente ; il faut vérifier le traitement de cet
+octet par le backend HID avant de comparer ces tailles ou de réutiliser telles
+quelles ses routines d'écriture. Les codes entrants `0x0d` et `0x0f`
 ne sont pas acceptés par le décodeur de `src/inputs.rs` actuel. Les identifiants
 de cible d'image observés vont de `0x01` à `0x11`, tandis que seule la cible
 `0x01` a été reliée à une position physique. Ces écarts interdisent encore de

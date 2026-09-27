@@ -54,9 +54,11 @@ image, mais leur position physique reste inconnue. La première analyse de C03b
 avait ignoré la plupart des rapports HID ; elle est corrigée dans le relevé de
 protocole. La comparaison au code `mirajazz 0.16.2` relève une structure
 compatible pour les transferts `BAT`/`STP` et les champs d'état `ACK`. Elle
-relève aussi `QUCMD 1f 11`, une valeur `0x41` associée à `LIG`, des tailles JPEG
-différentes du rendu N3 par défaut et des identifiants de bouton que le décodeur
-actuel ne reconnaît pas. Ces écarts sont détaillés dans
+retrouve aussi les formes des commandes de luminosité à 65 %, d'effacement,
+de mode 3 et de maintien de connexion. `QUCMD 1f 11` reste inexpliquée ; les
+effets physiques de la luminosité et du mode, les tailles JPEG différentes du
+rendu N3 par défaut et les identifiants de bouton que le décodeur actuel ne
+reconnaît pas restent à qualifier. Ces écarts sont détaillés dans
 [l'investigation du protocole](protocole.md) ; aucun comportement du plugin
 OpenDeck n'a été testé sur le N1.
 
