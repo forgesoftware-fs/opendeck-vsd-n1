@@ -388,7 +388,7 @@ Craft. Pour chaque scénario, noter l'état initial, effectuer une seule opérat
 | C02c / `C02b-button-map-stream-vsd.pcapng` | VSD Craft ouvert et N1 visible ; appuyer sur les touches principales ligne par ligne, puis sur les deux boutons du haut et cliquer la molette | Relier les IDs `ACK` aux commandes physiques |
 | C02d / `C02d-wheel-isolated.pcapng` | Cliquer la molette, faire une rotation horaire puis antihoraire en séparant les gestes par des pauses | ID du clic, IDs et sens des rotations |
 | C03 / `03-image.pcapng` | Changer uniquement l'image d'une touche ; alterner deux images distinctes | En-têtes, position, format, découpage, ordre, validation finale et orientation |
-| C04 / `04-luminosite.pcapng` | Si disponible dans VSD Craft, sélectionner trois valeurs distinctes | Commande, échelle et réponse ; noter les valeurs exactes de l'interface |
+| C04 / `C04-brightness-stream.pcapng` | VSD Craft ouvert et connecté ; si la commande existe, relever le niveau initial puis choisir minimum, milieu et maximum avec une pause entre chaque | Valeurs affichées, commandes `LIG`, réponses éventuelles et effet visible sur l'écran ; noter l'échelle exacte de l'interface |
 | C05 / `05-options.pcapng` | Si présents, isoler appui maintenu, rotation/appui d'encodeur, veille et réveil | Capacités supplémentaires ; subdiviser en un fichier par fonction |
 
 Pour C03, utiliser les images de référence ci-dessus et conserver leurs noms et
