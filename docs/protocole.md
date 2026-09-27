@@ -185,15 +185,31 @@ appui/relâchement, avec les IDs `0x01` à `0x0f` et les états `01` puis `00`,
 puis trois paires de même forme pour les IDs `0x1e`, `0x1f` et `0x23`. L'opérateur
 confirme avoir pressé les 15 touches de la grille ligne par ligne, de gauche à
 droite puis de haut en bas. Les IDs `0x01` à `0x0f` correspondent donc à cet
-ordre de lecture. L'opérateur confirme aussi avoir pressé les boutons du haut
-de gauche à droite : `0x1e` correspond au bouton gauche, `0x1f` au bouton du
-centre et `0x23` au bouton droit.
+ordre de lecture. L'opérateur confirme aussi avoir essayé, de gauche à droite,
+les deux boutons séparés du haut puis le clic de la molette ; ils ont produit
+`0x1e`, `0x1f` et `0x23` respectivement.
 
 Les huit rapports restants portent tous l'ID `0x33` et l'état `00`, de 26,495 s
-à 27,300 s. Aucun état `01` pour cet ID n'apparaît. La trace ne distingue donc
-pas le clic de molette de la rotation et ne révèle pas le sens de rotation. Aucun
-rapport de clavier standard sur `0x81` n'est relevé pendant cette capture avec
-VSD Craft ; cela contraste avec les 17 paires de touches de C02b, logiciel fermé.
+à 27,300 s. C02d montre que `0x33` est émis pendant une rotation horaire ; aucun
+état `01` pour cet ID n'apparaît. Aucun rapport de clavier standard sur `0x81`
+n'est relevé pendant cette capture avec VSD Craft ; cela contraste avec les
+17 paires de touches de C02b, logiciel fermé.
+
+## Capture de molette isolée C02d du 27 septembre 2026
+
+La capture `C02d-wheel-isolated.pcapng`, conservée hors du dépôt dans
+`/tmp/opendeck-vsd-n1-captures/`, contient 33 070 paquets sur 19,690990 secondes,
+sans perte signalée. Le trafic propriétaire est sur le bus 1, adresse 26 ; il
+contient 66 rapports `ACK` entrants sur `0x82`.
+
+Un appui-relâchement `0x23/01` puis `0x23/00` apparaît entre 5,047 s et 6,414 s.
+L'opérateur confirme qu'il s'agit du clic de molette. Les rotations produisent
+20 rapports `0x32/00` (9,561–12,025 s) et 44 rapports `0x33/00` (8,869–9,246 s
+puis 12,390–16,501 s). L'opérateur confirme avoir commencé par le sens horaire ;
+la première série `0x33` suit cette action. `0x32` apparaît dans la phase de
+rotation opposée, ce qui l'associe probablement au sens antihoraire ; la trace
+contient ensuite de nouveaux rapports `0x33`. Les deux IDs de rotation restent
+sans état `01` et sont donc des événements, non des transitions d'appui.
 
 ## Capture d'images locale C03 du 27 septembre 2026
 
@@ -353,7 +369,8 @@ Craft. Pour chaque scénario, noter l'état initial, effectuer une seule opérat
 | C00 / `00-repos.pcapng` | Contrôleur branché, logiciel fermé, puis repos de 30 secondes | Trafic spontané et état de référence |
 | C01 / `01-init.pcapng` | Capturer avant le branchement et le lancement de VSD Craft, puis attendre 45 secondes | Énumération, commandes initiales, réponses et éventuel maintien de connexion |
 | C02 / `02-boutons.pcapng` | Appuyer puis relâcher chaque bouton, cinq fois, avec pauses et positions notées | Codes, états, répétitions, interface utilisée et indexation |
-| C02c / `C02b-button-map-stream-vsd.pcapng` | VSD Craft ouvert et N1 visible ; appuyer une fois sur chaque touche principale ligne par ligne, puis sur les trois boutons du haut et enfin sur la molette | Relier les IDs `ACK` aux positions ; séparer clic et rotation de molette |
+| C02c / `C02b-button-map-stream-vsd.pcapng` | VSD Craft ouvert et N1 visible ; appuyer sur les touches principales ligne par ligne, puis sur les deux boutons du haut et cliquer la molette | Relier les IDs `ACK` aux commandes physiques |
+| C02d / `C02d-wheel-isolated.pcapng` | Cliquer la molette, faire une rotation horaire puis antihoraire en séparant les gestes par des pauses | ID du clic, IDs et sens des rotations |
 | C03 / `03-image.pcapng` | Changer uniquement l'image d'une touche ; alterner deux images distinctes | En-têtes, position, format, découpage, ordre, validation finale et orientation |
 | C04 / `04-luminosite.pcapng` | Si disponible dans VSD Craft, sélectionner trois valeurs distinctes | Commande, échelle et réponse ; noter les valeurs exactes de l'interface |
 | C05 / `05-options.pcapng` | Si présents, isoler appui maintenu, rotation/appui d'encodeur, veille et réveil | Capacités supplémentaires ; subdiviser en un fichier par fonction |
@@ -492,7 +509,7 @@ Produire une table d'analyse avant de choisir la variante :
 | Opération | Capture et trames | Interprétation | Correspondance mirajazz | Confirmation matérielle |
 | --- | --- | --- | --- | --- |
 | Initialisation | C01 : énumération et contrôle seulement ; C02 : `DIS`, `LIG 00 00 41`, `QUCMD`, `CLE`, `MOD`, `CONNECT` | `DIS` et les commandes connues ont des formes correspondantes ; `LIG` est un réglage à 65 ; `QUCMD` inconnue | Partielle | Échanges VSD Craft observés, mais initialisation OpenDeck non testée |
-| Boutons | C02 : ID `0x0f`/`0x0d` à l'indice 9 ; C02b : 17 paires clavier sur `0x81`, logiciel fermé ; C02c : IDs `0x01`–`0x0f`, `0x1e`, `0x1f`, `0x23` appui/relâchement, puis huit `0x33/00` | IDs de grille ligne par ligne ; IDs des boutons du haut de gauche à droite ; rôle de `0x33` indéterminé | Forte pour les 18 boutons, inconnue pour la molette | C02c confirme le chemin `ACK` avec VSD Craft actif ; isoler le clic et les deux sens de rotation |
+| Boutons et molette | C02b : 17 paires clavier sur `0x81`, logiciel fermé ; C02c : IDs `0x01`–`0x0f`, `0x1e`, `0x1f`, `0x23` dans l'ordre des gestes ; C02d : `0x23/01` puis `0x23/00`, 20 `0x32/00` et 44 `0x33/00` | IDs de grille ligne par ligne ; `0x1e`/`0x1f` pour les deux boutons du haut, `0x23` pour le clic de molette ; `0x33` horaire et `0x32` probablement antihoraire | Forte pour les 17 boutons et le clic, partielle pour le sens de rotation | C02c/C02d confirment les ACK avec VSD Craft actif ; confirmer le sens de `0x32` et les séquences complètes |
 | Image d'une touche | C03c : `BAT`, longueur u16 BE, cible `0x01`, JPEG A/B, puis `STP` | Correspond à `send_image`/`flush`; cible `0x01` reliée à la première case | Forte pour ce parcours | Oui, confirmation de l'opérateur pour A puis B |
 | Luminosité, si disponible | C02 : `LIG 00 00 41`, forme `set_brightness(65)` | Forme de commande reconnue ; les valeurs 0–100 sont prises en charge par la bibliothèque | Partielle | Effet physique non mesuré ; aucun changement de niveau comparé |
 

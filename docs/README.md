@@ -4,7 +4,7 @@ Ce dossier cadre l'adaptation du fork `opendeck-vsd-n1` pour le contrôleur
 Basicolor N1, identifié dans le besoin par le couple USB `5548:1002`.
 
 **État au 27 septembre 2026 : J0 est implémenté ; J1 est en cours.** Les captures
-C01–C03c et C02b–C02c ont été recueillies sur l'exemplaire local avec Bazzite et
+C01–C03c et C02b–C02d ont été recueillies sur l'exemplaire local avec Bazzite et
 Proton. C03c confirme le transfert des images tests A puis B via « Change Icon »
 et leur affichage sur le N1, d'après l'opérateur. C03b avait été analysée de façon
 incomplète avant de relire le champ HID `usbhid.data`. Ces captures ne valident
@@ -24,22 +24,24 @@ et transmet des données JPEG. C03c identifie les images A puis B dans le trafic
 après le parcours « Change Icon » ; l'opérateur confirme leur affichage sur le
 N1. Le champ cible `0x01` des trames `BAT` correspond à la première case de la
 grille. C02c associe les événements `0x01`–`0x0f` aux touches principales dans
-l'ordre ligne par ligne confirmé par l'opérateur ; les boutons du haut donnent,
-de gauche à droite, `0x1e`, `0x1f` et `0x23`. Les cibles d'image `0x0f` et `0x0d` sont
-ainsi reliées aux 15e et 13e touches. C03b concernait les champs de
+l'ordre ligne par ligne confirmé par l'opérateur. Les deux boutons du haut
+donnent `0x1e` puis `0x1f` ; `0x23` correspond au clic de molette. Les cibles
+d'image `0x0f` et `0x0d` sont ainsi reliées aux 15e et 13e touches. C03b
+concernait les champs de
 l'action « Ouvrir » et sa première analyse avait ignoré la plupart des rapports
 HID. La comparaison au code `mirajazz 0.16.2` montre une structure compatible
 pour l'en-tête et la fin des transferts d'image, ainsi que pour deux champs des
 réponses `ACK`, et retrouve la forme des commandes de luminosité à 65 %,
 d'effacement et de mode 3. `QUCMD` reste inexpliquée ; les dimensions d'image et
-le rôle de la molette `0x33` restent à qualifier. Aucun essai d'acceptation du
+le sens correspondant à `0x32` reste à confirmer. Aucun essai d'acceptation du
 plugin n'a encore été exécuté.
 
 C02b, avec VSD Craft fermé, contient 17 paires sur le clavier standard `0x81`.
 C02c, avec VSD Craft actif, reçoit les événements propriétaires sur `0x82` :
-les touches de la grille suivent `0x01`–`0x0f`, les trois boutons du haut
-`0x1e`, `0x1f` et `0x23`. Huit rapports `0x33/00` apparaissent pendant l'action
-finale sur la molette, sans distinguer clic et rotation.
+les touches de la grille suivent `0x01`–`0x0f`, les deux boutons du haut
+`0x1e` et `0x1f`, et le clic de molette `0x23`. C02d relève `0x33/00` pendant
+la première rotation horaire et `0x32/00` pendant la phase opposée ;
+l'association de `0x32` au sens antihoraire reste à confirmer.
 
 La première version doit permettre à OpenDeck de détecter le N1, de recevoir les
 appuis sur ses boutons et d'afficher une image sur une touche. La proximité des
@@ -61,8 +63,9 @@ reste à démontrer.
 
 1. ~~Préparer l'identité du fork et conserver son historique et sa licence.~~ **J0 fait** ; vérifier l'unicité de l'identité avant diffusion.
 2. ~~Relever les interfaces et recueillir les captures initiales.~~ **C01–C03c
-   et C02b–C02c faits ; A/B et la cible `0x01` confirmées sur la première case ;
-   ordre des IDs des 18 boutons confirmé** ; qualifier la molette.
+   et C02b–C02d faits ; A/B et la cible `0x01` confirmées sur la première case ;
+   IDs des 15 touches, des deux boutons du haut et du clic de molette confirmés** ;
+   terminer la qualification des deux sens de rotation.
 3. Établir le protocole, puis réaliser une implémentation expérimentale isolée.
 4. Valider détection, boutons et image sur le N1 avant de l'annoncer compatible.
 5. Préparer l'archive et exécuter la recette Bazzite pour chaque mode d'installation.
