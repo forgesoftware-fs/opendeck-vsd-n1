@@ -8,9 +8,12 @@ restent à investiguer.**
 Le code examiné est celui du commit
 `10d183451807cc172fdf394bdd34f41a33fb52d3`, version `0.11.0` du plugin d'origine.
 Il reconnaît le TreasLin N3 `5548:1001`, mais pas le N1 `5548:1002`.
-Aucune capture ni recette du N1 n'accompagne cet état initial. L'identité du fork,
-son assemblage Linux et une règle udev dédiée ont depuis été mis en place. La
-découverte des appareils reste désactivée jusqu'à la qualification du protocole.
+Aucun échange d'initialisation, d'appui ou d'image ni aucune recette du N1
+n'accompagne cet état initial. Un premier relevé sysfs local confirme maintenant
+deux interfaces HID pour `5548:1002` ; il est détaillé dans
+[l'investigation du protocole](protocole.md). L'identité du fork, son assemblage
+Linux et une règle udev dédiée ont aussi été mis en place. La découverte reste
+désactivée jusqu'à la qualification du protocole.
 
 La première version doit permettre à OpenDeck de détecter le N1, de recevoir les
 appuis sur ses boutons et d'afficher une image sur une touche. La proximité des

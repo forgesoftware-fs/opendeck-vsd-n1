@@ -14,9 +14,10 @@ Bazzite.
 
 ## Development status
 
-J0, the fork identity and Linux package setup, is in place. Protocol
-investigation and hardware validation are still required before enabling device
-discovery or publishing compatibility claims.
+J0, the fork identity and Linux package setup, is in place. A first local sysfs
+inventory identifies the two HID interfaces; initialization, button, and image
+traffic still need to be captured before enabling device discovery or publishing
+compatibility claims.
 
 See the [development and investigation documents](docs/README.md) for the
 scope, protocol capture procedure, Bazzite setup, and acceptance criteria.

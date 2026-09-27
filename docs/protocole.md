@@ -15,9 +15,69 @@ rapports de 36 et 90 octets, mais leur lecture a échoué. Il ne fournit donc pa
 les usages HID ni le contenu de ces rapports. Ces longueurs et les tailles
 maximales des endpoints ne définissent pas le format des commandes.
 
-Sur l'exemplaire Basicolor, confirmer le VID/PID, les interfaces, les usages, les
+Avant le relevé local ci-dessous, le VID/PID, les interfaces, les usages, les
 identifiants de rapport, les tailles réelles des transferts et le rôle de chaque
-interface. La sélection `0xFFA0:1` du code N3 reste une hypothèse pour le N1.
+interface restaient à confirmer. La sélection `0xFFA0:1` du code N3 était une
+hypothèse pour le N1.
+
+## Relevé sysfs local du 27 septembre 2026
+
+Le noyau expose un périphérique `5548:1002`, USB 2.0, une configuration et deux
+interfaces HID. `bcdDevice` vaut `0002`, le débit négocié est 480 Mbit/s et la
+puissance déclarée est 450 mA. Les chaînes USB rapportent le fabricant
+`HOTSPOTEKUSB` et le produit `HOTSPOTEKUSB HID DEMO`. Elles ne confirment pas à
+elles seules l'étiquette commerciale, la révision ni le firmware de l'exemplaire.
+Le numéro de série n'est pas conservé dans le dépôt.
+
+Session : Linux x86_64, noyau `7.2.4-ogc3.1.fc44.x86_64`, `udevadm` 259. Le
+descripteur de configuration USB relevé depuis sysfs est :
+
+```text
+12 01 00 02 00 00 00 40 48 55 02 10 02 00 01 02 03 01
+09 02 42 00 02 01 00 a0 e1
+09 04 00 00 02 03 00 00 00
+09 21 00 02 00 01 22 24 00
+07 05 82 03 00 02 01
+07 05 03 03 00 04 01
+09 04 01 00 01 03 01 01 00
+09 21 00 02 00 01 22 5a 00
+07 05 81 03 40 00 0a
+```
+
+| Interface | Descripteur d'interface | Rapport HID et usage | Endpoints USB |
+| --- | --- | --- | --- |
+| `0` (`1-2:1.0` dans cette session) | Classe `03`, sous-classe `00`, protocole `00`, deux endpoints | 36 octets ; collection d'application page `0xFFA0`, usage `1` ; rapport entrant 512 octets et sortant 1024 octets, sans identifiant de rapport déclaré | `0x82` IN, interruption, 512 octets, intervalle 1 ; `0x03` OUT, interruption, 1024 octets, intervalle 1 |
+| `1` (`1-2:1.1` dans cette session) | Classe `03`, sous-classe `01`, protocole `01`, un endpoint | 90 octets ; interface clavier de démarrage avec collections clavier et commandes grand public | `0x81` IN, interruption, 64 octets, intervalle 10 |
+
+Les rapports HID ont été lus depuis sysfs. La configuration USB expose les
+adresses et tailles maximales des endpoints ci-dessus. L'interface `0` correspond
+au candidat de découverte `0xFFA0:1` utilisé par le code N3 ; cette correspondance
+identifie l'interface candidate, pas le protocole applicatif. L'interface `1`
+est le clavier et ne doit pas être ouverte comme contrôleur de touches.
+
+Descripteurs de rapports relevés, en hexadécimal :
+
+```text
+Interface 0 (36 octets):
+06 a0 ff 09 01 a1 01 09 02 15 00 26 ff 00 75 08
+96 00 02 81 02 09 03 15 00 26 ff 00 75 08 96 00
+04 91 02 c0
+
+Interface 1 (90 octets):
+05 01 09 06 a1 01 85 01 05 07 19 e0 29 e7 15 00
+25 01 75 01 95 08 81 02 95 01 75 08 81 01 95 05
+75 01 05 08 19 01 29 05 91 02 95 01 75 03 91 01
+95 06 75 08 15 00 25 65 05 07 19 00 29 65 81 00
+c0 05 0c 09 01 a1 01 85 02 19 00 2a 3c 02 15 00
+26 3c 02 95 01 75 10 81 00 c0
+```
+
+Ce relevé établit l'interface HID candidate et les descripteurs de cet exemplaire.
+Il n'établit aucune commande d'initialisation, aucun événement de bouton et aucun
+format d'image. `lsusb` n'a pas pu initialiser libusb dans l'environnement de
+travail (`-99`) ; la lecture sysfs a fourni les descripteurs USB et HID. Aucun
+nœud `/dev/hidraw*` n'est exposé dans cet environnement, donc aucune capture de
+transferts n'a pu être faite ici. Le jalon J1 reste ouvert.
 
 ## Dossier de preuves
 

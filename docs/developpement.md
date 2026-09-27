@@ -43,6 +43,11 @@ n'est pas encore interrogé : `5548:1002` ne sera activé qu'après l'observatio
 de son interface et de son protocole. Aucun appareil n'est donc découvert par
 la version de travail actuelle.
 
+Le relevé sysfs consigné dans [l'investigation du protocole](protocole.md)
+identifie l'interface candidate `0xFFA0:1` et l'interface clavier séparée. Cela
+permet de cibler les prochaines captures ; aucun échange applicatif n'a encore
+été observé et J1 reste en cours.
+
 ## Identité du fork
 
 Valeurs déjà appliquées. Vérifier l'unicité de l'identifiant et du namespace
@@ -99,7 +104,7 @@ flowchart LR
 | Jalon | Travail | Condition de sortie |
 | --- | --- | --- |
 | J0 — Préparation | Renommer le fork, préserver provenance et licence, adapter l'assemblage | **Configuré** ; valider unicité et import avant diffusion ; aucune annonce de compatibilité N1 |
-| J1 — Observation | Inventorier le N1, capturer initialisation, boutons, image et luminosité disponible | Dossier de preuves et choix motivé du protocole et de l'interface |
+| J1 — Observation | Inventorier le N1, capturer initialisation, boutons, image et luminosité disponible | **En cours** : interfaces HID consignées ; les captures d'opérations et le choix du protocole restent à établir |
 | J2 — Prototype boutons | Réaliser une intégration expérimentale isolée ; ouvrir l'interface et transmettre les appuis | Détection unique et correspondance correcte des boutons dans OpenDeck |
 | J3 — Prototype image | Implémenter le format, le découpage et l'envoi observés | Image lisible, orientée et adressée correctement sur une touche |
 | J4 — Livraison Bazzite | Stabiliser reconnexion, archive, règle udev et installation | Recette native réussie et résultat Flatpak documenté séparément |
