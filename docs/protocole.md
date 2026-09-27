@@ -128,6 +128,11 @@ confirme que VSD Craft sous Proton échange avec l'interface candidate du N1 ; i
 ne suffit pas encore à déterminer les commandes, les identifiants de touches ou
 le format complet des images. Le jalon J1 reste ouvert.
 
+Les codes `0x0f` et `0x0d` observés dans ces rapports entrants réapparaissent
+comme cibles d'image dans les trames `BAT` de C03c. Cette coïncidence suggère
+un espace d'identifiants commun, mais ne permet pas d'associer ces deux codes à
+des positions physiques : l'ordre des actions C02 n'a pas été noté.
+
 ## Capture d'images locale C03 du 27 septembre 2026
 
 La capture déclarée pour les changements d'image a été faite avec VSD Craft sous
@@ -153,8 +158,9 @@ par le chemin Windows présenté dans Proton. Le repère de grille ne suffit pas
 associer les JPEG reconstitués à cette touche ni à un code USB. La fréquence des
 images dans la capture ne doit pas être assimilée au nombre d'images source, car
 des contenus se répètent.
-Le format applicatif complet, le rôle des marqueurs `CRT` observés avec C02 et la
-correspondance des touches restent à déterminer ; J1 reste ouvert.
+À ce stade, le format applicatif complet, le rôle des marqueurs `CRT` et la
+correspondance des touches restent à déterminer ; la capture C03c plus récente
+ci-dessous lève une partie de ces inconnues.
 
 ## Reprise C03b et correction de l'analyse du 27 septembre 2026
 
@@ -201,9 +207,20 @@ N1. La touche ciblée est la première case, en haut à gauche, selon la capture
 d'écran. C03c confirme donc que ce parcours transmet les images au N1 et modifie
 son affichage.
 
-Cette observation ne décode pas encore le format applicatif autour des JPEG et
-ne relie pas la touche à un code USB. Elle ne valide ni l'initialisation, ni les
-événements de boutons, ni l'intégration OpenDeck ; J1 reste en cours.
+Chaque image est précédée d'une trame `BAT`. Dans ces rapports, le marqueur
+`CRT\0\0BAT\0` est suivi d'une longueur JPEG codée sur trois octets en ordre
+réseau, d'une cible d'image sur un octet, puis de `00`. Pour A, la trame 30 393
+porte `00 19 9a 01 00` : longueur `0x199a` (6 554 octets), cible `0x01`, puis
+`00`. Les 6 554 octets JPEG suivants correspondent exactement à la longueur
+annoncée. Pour B, la trame 55 067 porte `00 1b a7 01 00` : longueur `0x1ba7`
+(7 079 octets), même cible `0x01`, et le JPEG suivant fait 7 079 octets.
+
+Le couple cible `0x01` / première case en haut à gauche est donc établi sur cet
+exemplaire. D'autres valeurs de cible, de `0x02` à `0x11`, apparaissent dans la
+capture, mais leurs positions ne sont pas relevées. Les valeurs `0x0d` et `0x0f`
+coïncident avec deux codes d'événement C02 ; leur correspondance physique reste
+à vérifier. Cette capture ne valide ni l'initialisation, ni les boutons, ni
+l'intégration OpenDeck ; J1 reste en cours.
 
 ## Images de référence utilisées sous Proton
 
@@ -374,7 +391,7 @@ Produire une table d'analyse avant de choisir la variante :
 | --- | --- | --- | --- | --- |
 | Initialisation | C01, bus 1/adresse 25 : énumération et contrôle seulement ; aucun transfert sur `0x82`/`0x03` | Aucun échange applicatif observé ; état de VSD Craft non consigné | À comparer | Non effectuée |
 | Boutons | C02 : réponses `ACK\0\0OK\0\0` avec codes `0x0f` et `0x0d`, valeurs `01` puis `00` | Paires compatibles avec appui/relâchement ; positions et champs non confirmés | À comparer | Non effectuée |
-| Image d'une touche | C03 : JPEG/JFIF 96 × 96 ; C03c : rendus des images A puis B retrouvés dans les JPEG transmis sur `0x03` ; opérateur confirme leur affichage sur le N1 | Parcours « Change Icon » confirmé ; code USB de la touche et encapsulation applicative non établis | À comparer | Oui, confirmation de l'opérateur pour A puis B |
+| Image d'une touche | C03 : JPEG/JFIF 96 × 96 ; C03c : trames `BAT` annonçant la taille du JPEG et la cible `0x01`, puis JPEG A/B ; opérateur confirme leur affichage sur la première case | Cible `0x01` reliée à la première case ; cibles `0x02`–`0x11` non cartographiées | À comparer | Oui, confirmation de l'opérateur pour A puis B |
 | Luminosité, si disponible | À renseigner | Inconnue | À comparer | Non effectuée |
 
 Une compatibilité démontrée permet de réutiliser la variante concernée. Des écarts

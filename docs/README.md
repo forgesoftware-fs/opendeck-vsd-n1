@@ -22,10 +22,11 @@ désactivée jusqu'à la qualification du protocole.
 Les captures C02 et C03c montrent que VSD Craft échange avec l'interface candidate
 et transmet des données JPEG. C03c identifie les images A puis B dans le trafic
 après le parcours « Change Icon » ; l'opérateur confirme leur affichage sur le
-N1. C03b concernait les champs de l'action « Ouvrir » et sa première analyse
-avait ignoré la plupart des rapports HID. Les codes de bouton, les commandes et
-la correspondance USB entre image et touche restent à décoder ; aucun essai
-d'acceptation du plugin n'a encore été exécuté.
+N1. Le champ cible `0x01` des trames `BAT` correspond à la première case de la
+grille. Les codes C02 `0x0f` et `0x0d` apparaissent aussi comme cibles d'image,
+mais leurs positions physiques restent inconnues. C03b concernait les champs de
+l'action « Ouvrir » et sa première analyse avait ignoré la plupart des rapports
+HID. Aucun essai d'acceptation du plugin n'a encore été exécuté.
 
 La première version doit permettre à OpenDeck de détecter le N1, de recevoir les
 appuis sur ses boutons et d'afficher une image sur une touche. La proximité des
@@ -47,8 +48,8 @@ reste à démontrer.
 
 1. ~~Préparer l'identité du fork et conserver son historique et sa licence.~~ **J0 fait** ; vérifier l'unicité de l'identité avant diffusion.
 2. ~~Relever les interfaces et recueillir les captures initiales.~~ **C01–C03c faits ;
-   A/B et leur affichage N1 confirmés dans C03c** ; associer les codes USB et
-   images aux actions et positions physiques.
+   A/B et la cible `0x01` confirmées sur la première case** ; associer les autres
+   codes USB et images aux actions et positions physiques.
 3. Établir le protocole, puis réaliser une implémentation expérimentale isolée.
 4. Valider détection, boutons et image sur le N1 avant de l'annoncer compatible.
 5. Préparer l'archive et exécuter la recette Bazzite pour chaque mode d'installation.

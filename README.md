@@ -19,9 +19,10 @@ Bazzite.
 J0, the fork identity and Linux package setup, is in place. A local sysfs
 inventory and exploratory C01–C03c captures identify two HID interfaces, vendor
 traffic and JPEG image data. C03c confirms that VSD Craft's custom-icon flow
-transfers the selected image to the N1. Initialization semantics, button-code
-mapping, image-to-key mapping and OpenDeck integration still need validation
-before enabling discovery or publishing compatibility claims.
+transfers the selected image to the N1 and maps target `0x01` to the first key.
+Initialization semantics, the remaining button and image mappings, and OpenDeck
+integration still need validation before enabling discovery or publishing
+compatibility claims.
 
 See the [development and investigation documents](docs/README.md) for the
 scope, protocol capture procedure, Bazzite setup, and acceptance criteria.
