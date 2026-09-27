@@ -77,7 +77,7 @@ Il n'établit aucune commande d'initialisation, aucun événement de bouton et a
 format d'image. Lors de ce premier relevé, `lsusb` n'a pas pu initialiser libusb
 dans l'environnement d'analyse (`-99`) et aucun nœud `/dev/hidraw*` n'y était
 exposé ; la lecture sysfs a fourni les descripteurs USB et HID. Les captures
-usbmon C01–C03 décrites ci-dessous ont ensuite été réalisées sur l'hôte Bazzite.
+usbmon C01–C03 et C03b décrites ci-dessous ont ensuite été réalisées sur l'hôte Bazzite.
 Le jalon J1 reste ouvert.
 
 ## Première capture usbmon locale du 27 septembre 2026
@@ -155,6 +155,28 @@ images dans la capture ne doit pas être assimilée au nombre d'images source, c
 des contenus se répètent.
 Le format applicatif complet, le rôle des marqueurs `CRT` observés avec C02 et la
 correspondance des touches restent à déterminer ; J1 reste ouvert.
+
+## Reprise d'image locale C03b du 27 septembre 2026
+
+Une nouvelle capture sur `usbmon1` a recueilli 148 865 paquets en 43,664 secondes,
+sans perte signalée. Le fichier `C03b-known-images.pcapng` est conservé hors du
+dépôt dans `/tmp/opendeck-vsd-n1-captures/`. Elle cible le bus 1, adresse 25.
+Sur `0x03` OUT, la trace contient 58 919 soumissions et autant de complétions ;
+seules 51 soumissions portent une charge utile, toutes dans les 9,119 premières
+millisecondes. Elles totalisent 52 224 octets.
+
+Ces charges utiles contiennent dix JPEG complets de 96 × 96 pixels, entre 2 891
+et 2 997 octets. Leur aperçu correspond aux icônes déjà présentes dans la grille
+(illustrations, touches colorées et chiffre `1`). Aucun ne correspond aux images
+de référence `N1-test-A.png` et `N1-test-B.png`. Aucun transfert de données sur
+`0x82` IN n'a été observé. Après les dix premières millisecondes, la capture ne
+contient plus de charge utile applicative de l'interface candidate.
+
+C03b ne confirme donc pas l'envoi des deux nouvelles images : elle documente
+seulement le chargement initial de la grille déjà configurée. La trace seule ne
+permet pas de savoir si les sélections A/B ont été appliquées dans VSD Craft ni
+si une commande distincte est nécessaire pour envoyer la configuration. J1 reste
+ouvert.
 
 ## Images de référence pour reprendre C03 sous Proton
 
@@ -328,7 +350,7 @@ Produire une table d'analyse avant de choisir la variante :
 | --- | --- | --- | --- | --- |
 | Initialisation | C01, bus 1/adresse 25 : énumération et contrôle seulement ; aucun transfert sur `0x82`/`0x03` | Aucun échange applicatif observé ; état de VSD Craft non consigné | À comparer | Non effectuée |
 | Boutons | C02 : réponses `ACK\0\0OK\0\0` avec codes `0x0f` et `0x0d`, valeurs `01` puis `00` | Paires compatibles avec appui/relâchement ; positions et champs non confirmés | À comparer | Non effectuée |
-| Image d'une touche | C03 : JPEG/JFIF 96 × 96 réassemblé depuis trois rapports de 1 024 octets ; case supérieure gauche ciblée | Trames JPEG observées ; fichiers source, code USB de la touche et sémantique de l'encapsulation non établis | À comparer | Non effectuée |
+| Image d'une touche | C03 : JPEG/JFIF 96 × 96 réassemblé depuis trois rapports de 1 024 octets ; case supérieure gauche ciblée. C03b : dix JPEG initiaux, aucun des deux fichiers tests | Trames JPEG observées ; C03b ne confirme pas l'envoi de A/B ; code USB de la touche et sémantique de l'encapsulation non établis | À comparer | Non effectuée |
 | Luminosité, si disponible | À renseigner | Inconnue | À comparer | Non effectuée |
 
 Une compatibilité démontrée permet de réutiliser la variante concernée. Des écarts

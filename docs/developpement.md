@@ -47,9 +47,10 @@ Le relevé sysfs consigné dans [l'investigation du protocole](protocole.md)
 identifie l'interface candidate `0xFFA0:1` et l'interface clavier séparée. C01
 documente l'énumération ; C02–C03 montrent VSD Craft sous Proton échangeant avec
 l'interface candidate, avec des réponses de type `ACK` et des images JPEG de
-96 × 96 pixels. Les codes et commandes ne sont pas décodés, la correspondance avec
-les touches physiques reste partielle et aucun comportement du plugin OpenDeck
-n'a été testé ; J1 reste en cours.
+96 × 96 pixels. La reprise C03b n'a capturé que les images de la grille existante,
+pas les fichiers A/B de référence. Les codes et commandes ne sont pas décodés, la
+correspondance avec les touches physiques reste partielle et aucun comportement
+du plugin OpenDeck n'a été testé ; J1 reste en cours.
 
 ## Identité du fork
 
@@ -107,7 +108,7 @@ flowchart LR
 | Jalon | Travail | Condition de sortie |
 | --- | --- | --- |
 | J0 — Préparation | Renommer le fork, préserver provenance et licence, adapter l'assemblage | **Configuré** ; valider unicité et import avant diffusion ; aucune annonce de compatibilité N1 |
-| J1 — Observation | Inventorier le N1, capturer initialisation, boutons, image et luminosité disponible | **En cours** : inventaire et captures C01–C03 consignés ; décoder l'initialisation, associer les codes `0x0f`/`0x0d` et les JPEG aux positions, comparer le protocole et relever la luminosité si disponible |
+| J1 — Observation | Inventorier le N1, capturer initialisation, boutons, image et luminosité disponible | **En cours** : inventaire et captures C01–C03 consignés ; C03b n'a pas observé l'envoi des images A/B ; confirmer l'envoi, décoder l'initialisation, associer les codes `0x0f`/`0x0d` et les JPEG aux positions, comparer le protocole et relever la luminosité si disponible |
 | J2 — Prototype boutons | Réaliser une intégration expérimentale isolée ; ouvrir l'interface et transmettre les appuis | Détection unique et correspondance correcte des boutons dans OpenDeck |
 | J3 — Prototype image | Implémenter le format, le découpage et l'envoi observés | Image lisible, orientée et adressée correctement sur une touche |
 | J4 — Livraison Bazzite | Stabiliser reconnexion, archive, règle udev et installation | Recette native réussie et résultat Flatpak documenté séparément |
