@@ -156,6 +156,32 @@ des contenus se répètent.
 Le format applicatif complet, le rôle des marqueurs `CRT` observés avec C02 et la
 correspondance des touches restent à déterminer ; J1 reste ouvert.
 
+## Images de référence pour reprendre C03 sous Proton
+
+Les fichiers choisis pendant C03 n'étant pas connus, les JPEG de cette capture
+ne peuvent pas encore être associés à une source précise. Pour une nouvelle
+capture, deux PNG de référence sont disponibles dans [`test-assets/`](test-assets/) :
+
+| Fichier | Dimensions | Repère visuel | SHA-256 |
+| --- | --- | --- | --- |
+| [`N1-test-A.png`](test-assets/N1-test-A.png) | 96 × 96 | Lettre A, quatre quadrants rouge, jaune, vert et bleu | `c628cd74d74d76343f4f67b58d1789e6038b88cd6be372066e1a3fb681f2d713` |
+| [`N1-test-B.png`](test-assets/N1-test-B.png) | 96 × 96 | Lettre B, quatre quadrants violet, cyan, orange et gris clair | `be515d3cf626d84425fa5e840e79b39d4f65ce0274f509fb7312448accaec4c8` |
+
+Dans le sélecteur Windows de VSD Craft lancé sous Proton, le dépôt est accessible
+via la lettre `Z:` ; le chemin observé commence par `Z:/home/<utilisateur>`. Pour
+ce clone, ouvrir ensuite
+`Z:/home/<utilisateur>/forgesoftware/Projects/opendeck-vsd-n1/docs/test-assets/`
+et choisir les fichiers par leur nom exact. Si le dépôt a été déplacé, adapter
+le chemin jusqu'à `docs/test-assets` ; les deux noms restent fixes.
+
+Pour cette reprise, démarrer une nouvelle capture avant tout changement. Sur la
+case supérieure gauche déjà ciblée, sélectionner A, attendre deux secondes et
+noter l'heure, puis sélectionner B, attendre deux secondes et noter à nouveau
+l'heure. Garder le chemin et le nom de chaque source avec la capture, et vérifier
+l'image affichée dans VSD Craft avant de passer à la suivante. Ces fichiers
+facilitent l'identification et l'orientation des JPEG ; ils ne permettent pas,
+à eux seuls, de déduire l'encapsulation ou le code USB de la touche.
+
 ## Dossier de preuves
 
 Créer un dossier de session hors du dépôt pour les captures brutes. Conserver
@@ -197,10 +223,10 @@ Craft. Pour chaque scénario, noter l'état initial, effectuer une seule opérat
 | C04 / `04-luminosite.pcapng` | Si disponible dans VSD Craft, sélectionner trois valeurs distinctes | Commande, échelle et réponse ; noter les valeurs exactes de l'interface |
 | C05 / `05-options.pcapng` | Si présents, isoler appui maintenu, rotation/appui d'encodeur, veille et réveil | Capacités supplémentaires ; subdiviser en un fichier par fonction |
 
-Pour C03, utiliser une image asymétrique avec repères de coins et conserver son
-fichier d'origine. Refaire ensuite le changement sur une autre position pour
-identifier le champ d'adresse. Une commande absente du logiciel ou du matériel
-est consignée comme non observée.
+Pour C03, utiliser les images de référence ci-dessus et conserver leurs noms et
+empreintes avec les heures de sélection. Refaire ensuite le changement sur une
+autre position pour identifier le champ d'adresse. Une commande absente du
+logiciel ou du matériel est consignée comme non observée.
 
 ## Capture sous Windows avec USBPcap
 
