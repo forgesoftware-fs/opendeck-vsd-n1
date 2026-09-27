@@ -3,9 +3,10 @@
 ![Plugin Icon](assets/icon.png)
 
 Experimental fork of [opendeck-akp03](https://github.com/4ndv/opendeck-akp03)
-for the Basicolor N1 / VSD N1 (`5548:1002`). The USB protocol has not yet been
-captured or validated, so this plugin currently does not discover any device
-and must not be treated as N1 support.
+for the Basicolor N1 / VSD N1 (`5548:1002`). Exploratory USB captures now show
+traffic from VSD Craft under Proton, including 96 × 96 JPEG data. The complete
+protocol and key mapping remain unvalidated, so this plugin currently does not
+discover the N1 and must not be treated as device support.
 
 The inherited device mappings remain in the source as investigation references.
 They are disabled at runtime so this fork does not compete with the original
@@ -14,10 +15,11 @@ Bazzite.
 
 ## Development status
 
-J0, the fork identity and Linux package setup, is in place. A first local sysfs
-inventory identifies the two HID interfaces; initialization, button, and image
-traffic still need to be captured before enabling device discovery or publishing
-compatibility claims.
+J0, the fork identity and Linux package setup, is in place. A local sysfs
+inventory and exploratory C01–C03 captures identify two HID interfaces, vendor
+traffic and JPEG image data. Initialization semantics, button-code mapping,
+image-to-key mapping and OpenDeck integration still need validation before
+enabling discovery or publishing compatibility claims.
 
 See the [development and investigation documents](docs/README.md) for the
 scope, protocol capture procedure, Bazzite setup, and acceptance criteria.

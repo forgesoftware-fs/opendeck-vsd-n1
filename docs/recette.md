@@ -1,7 +1,9 @@
 # Plan de recette du Basicolor N1
 
-**État initial : aucun essai matériel exécuté.** Cette grille définit les
-contrôles futurs. Elle ne constitue pas un rapport de compatibilité.
+**État : aucune recette du plugin OpenDeck exécutée.** Des captures matérielles
+exploratoires C01–C03 sont consignées dans l'investigation du protocole ; elles
+ne remplacent pas les contrôles d'acceptation ci-dessous et ne constituent pas
+un rapport de compatibilité.
 
 ## Conditions et preuves
 

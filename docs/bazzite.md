@@ -1,8 +1,10 @@
 # Installation et diagnostic sur Bazzite
 
-**Procédure préparatoire, non exécutée sur un N1.** Le dépôt fournit maintenant
-un assemblage Linux et `40-opendeck-vsd-n1.rules`, mais aucune recette matérielle
-n'a été exécutée. La règle sert aux investigations et ne valide pas le protocole.
+**Procédure préparatoire, non exécutée pour le plugin OpenDeck sur un N1.** Des
+captures exploratoires C01–C03 ont été réalisées sur l'hôte Bazzite et sont
+consignées dans l'investigation du protocole. Le dépôt fournit un assemblage Linux
+et `40-opendeck-vsd-n1.rules`, mais ni la règle ni le plugin n'ont passé de recette
+matérielle. Ces captures ne valident pas la procédure d'installation.
 
 ## Prérequis à relever
 
