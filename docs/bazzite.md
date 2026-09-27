@@ -1,9 +1,8 @@
 # Installation et diagnostic sur Bazzite
 
-**Procédure préparatoire, non exécutée sur un N1.** Le dépôt examiné ne fournit
-pas encore l'archive N1 ni le fichier `40-opendeck-vsd-n1.rules`. Les étapes
-d'installation ci-dessous s'appliqueront à une livraison validée. La règle
-proposée peut servir aux investigations ; elle ne valide pas le protocole.
+**Procédure préparatoire, non exécutée sur un N1.** Le dépôt fournit maintenant
+un assemblage Linux et `40-opendeck-vsd-n1.rules`, mais aucune recette matérielle
+n'a été exécutée. La règle sert aux investigations et ne valide pas le protocole.
 
 ## Prérequis à relever
 
@@ -18,17 +17,17 @@ Effectuer les opérations udev sur l'hôte Bazzite. Fermer VSD Craft et les autr
 clients du contrôleur. Tester les installations native et Flatpak l'une après
 l'autre, avec une seule instance d'OpenDeck active.
 
-## Règle udev proposée
+## Règle udev de développement
 
-Contenu prévu du fichier `40-opendeck-vsd-n1.rules`, à valider sur l'exemplaire :
+Le fichier [40-opendeck-vsd-n1.rules](../40-opendeck-vsd-n1.rules) contient la
+règle suivante, à valider sur l'exemplaire :
 
 ```udev
 KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="5548", ATTRS{idProduct}=="1002", MODE="0660", TAG+="uaccess"
 ```
 
-Cette règle reprend le mécanisme d'accès HID de la
-[règle du projet d'origine](../40-opendeck-akp03.rules), avec un seul couple
-VID/PID. Elle autorise les nœuds HID correspondants via les droits de session.
+Cette règle reprend le mécanisme d'accès HID de la règle du projet d'origine,
+limitée au couple USB `5548:1002`. Elle autorise les nœuds HID correspondants via les droits de session.
 La sélection de l'interface du contrôleur appartient au plugin : cette règle
 ne distingue pas à elle seule l'interface clavier.
 

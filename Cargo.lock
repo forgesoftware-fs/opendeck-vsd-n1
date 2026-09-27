@@ -518,7 +518,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "opendeck-akp03"
+name = "opendeck-vsd-n1"
 version = "0.11.0"
 dependencies = [
  "data-url",

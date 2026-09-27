@@ -16,38 +16,57 @@ Les constats suivants portent sur ce code, pas sur un essai du N1.
 | [src/inputs.rs](../src/inputs.rs) | Décodage propre aux commandes N3 : six touches avec écran, trois autres boutons et trois encodeurs |
 | [src/main.rs](../src/main.rs) | Réception des demandes d'image et de luminosité ; réinitialisation et demande de nouveau rendu après réveil |
 | [justfile](../justfile) | `just package` construit Linux, macOS et Windows, puis produit une archive avec l'identité d'origine |
-| [Règle udev actuelle](../40-opendeck-akp03.rules) | Plusieurs modèles autorisés, dont `5548:1001` ; aucune entrée `5548:1002` |
+| Règle udev d'origine | Plusieurs modèles autorisés, dont `5548:1001` ; aucune entrée `5548:1002` |
 
 Un ajout de VID/PID déclencherait donc plusieurs commandes héritées dès
 l'ouverture. L'expérimentation devra maîtriser ces envois, y compris ceux de la
 bibliothèque, de l'arrêt et du réveil, avant de connecter le N1 au chemin normal.
 
+## J0 — identité et assemblage configurés
+
+Le fork utilise maintenant le package `opendeck-vsd-n1`, le nom affiché
+`Basicolor N1 / VSD N1`, l'identifiant
+`com.forgesoftware.plugins.opendeck-vsd-n1` et le namespace `n1`. Le manifeste
+et la recette `just package` ciblent Linux x86_64. L'archive est configurée pour
+contenir le manifeste, le binaire, les ressources et `LICENSE` ; la règle
+`40-opendeck-vsd-n1.rules` est livrée séparément.
+
+La version du package et du manifeste reste `0.11.0`, héritée du point de
+départ. Le numéro et les noms de fichiers ne constituent pas une validation de
+support. L'unicité de l'identifiant OpenDeck et du namespace doit encore être
+vérifiée avant toute distribution. L'assemblage n'a pas encore été validé par
+l'import dans OpenDeck.
+
+Les anciennes requêtes HID sont désactivées dans `src/mappings.rs` pour ne pas
+faire ouvrir à ce fork les modèles que l'extension d'origine revendique. Le N1
+n'est pas encore interrogé : `5548:1002` ne sera activé qu'après l'observation
+de son interface et de son protocole. Aucun appareil n'est donc découvert par
+la version de travail actuelle.
+
 ## Identité du fork
 
-Conventions proposées pour l'implémentation ; elles ne sont pas encore appliquées.
-Vérifier l'unicité de l'identifiant et du namespace avant la première distribution.
+Valeurs déjà appliquées. Vérifier l'unicité de l'identifiant et du namespace
+avant la première distribution.
 
-| Élément | Cible proposée | Emplacements à adapter |
+| Élément | Valeur actuelle | Emplacements |
 | --- | --- | --- |
-| Nom affiché | `Basicolor N1 / VSD N1` | `manifest.json`, noms d'appareil et README |
+| Nom affiché | `Basicolor N1 / VSD N1` | `manifest.json` et README ; nom matériel à ajouter après qualification |
 | Package Rust | `opendeck-vsd-n1` | `Cargo.toml`, entrée du package dans `Cargo.lock` |
 | `PluginUUID` | `com.forgesoftware.plugins.opendeck-vsd-n1` | `manifest.json`, variable `id` du `justfile` |
-| Namespace | `n1`, deux caractères, sous réserve d'unicité | `DeviceNamespace` et `DEVICE_NAMESPACE` ensemble |
+| Namespace | `n1`, deux caractères, unicité à vérifier | `DeviceNamespace` et `DEVICE_NAMESPACE` ensemble |
 | Exécutable Linux | `opendeck-vsd-n1-linux` | `CodePathLin` et collecte du binaire |
-| Exécutables des autres plateformes, si livrés | `opendeck-vsd-n1-mac`, `opendeck-vsd-n1-win.exe` | Champs `CodePathMac`/`CodePathWin` et collecte |
 | Dossier du plugin | `com.forgesoftware.plugins.opendeck-vsd-n1.sdPlugin` | Assemblage de l'archive |
 | Archive | `opendeck-vsd-n1.plugin.zip` | Recette `zip` et documentation de livraison |
 | Règle udev | `40-opendeck-vsd-n1.rules` | Nouveau fichier limité à `5548:1002` et procédure Bazzite |
 
-Mettre à jour la description, l'auteur du fork et les liens de livraison tout en
-conservant la provenance, les crédits et [LICENSE](../LICENSE). Conserver
-l'historique Git et les anciennes entrées du changelog. Synchroniser la version
-du manifeste et du package ; laisser Cargo actualiser le lockfile lors du renommage.
+La description et l'auteur du fork ont été adaptés. La provenance, les crédits,
+[LICENSE](../LICENSE), l'historique Git et les anciennes entrées du changelog
+sont conservés. Le manifeste, le package et le lockfile portent le même numéro
+de version.
 
-L'identité propre au fork évite l'écrasement du plugin d'origine. Les filtres de
-découverte doivent aussi éviter que les deux plugins revendiquent simultanément
-un même appareil. Tout modèle conservé dans le fork devra avoir une compatibilité
-et une règle d'accès explicitement justifiées.
+L'identité propre au fork évite l'écrasement du plugin d'origine. Les modèles
+hérités ne sont pas recherchés pendant cette étape. Tout modèle réactivé devra
+avoir une compatibilité et une règle d'accès explicitement justifiées.
 
 ## Répartition des responsabilités
 
@@ -79,7 +98,7 @@ flowchart LR
 
 | Jalon | Travail | Condition de sortie |
 | --- | --- | --- |
-| J0 — Préparation | Renommer le fork, préserver provenance et licence, adapter l'assemblage | Identité cohérente ; aucune annonce de compatibilité N1 |
+| J0 — Préparation | Renommer le fork, préserver provenance et licence, adapter l'assemblage | **Configuré** ; valider unicité et import avant diffusion ; aucune annonce de compatibilité N1 |
 | J1 — Observation | Inventorier le N1, capturer initialisation, boutons, image et luminosité disponible | Dossier de preuves et choix motivé du protocole et de l'interface |
 | J2 — Prototype boutons | Réaliser une intégration expérimentale isolée ; ouvrir l'interface et transmettre les appuis | Détection unique et correspondance correcte des boutons dans OpenDeck |
 | J3 — Prototype image | Implémenter le format, le découpage et l'envoi observés | Image lisible, orientée et adressée correctement sur une touche |
@@ -96,10 +115,10 @@ avec les investigations restantes documentées.
 
 ## Préparer l'archive installable
 
-Le `just package` actuel nécessite les trois chaînes de compilation ; il ne
-produit pas encore une livraison N1. Pour la cible initiale Linux, adapter la
-recette et le manifeste aux plateformes effectivement livrées. Le README hérité
-mentionne Rust 1.87 ou ultérieur ; relever la version utilisée pour le build.
+La recette `just package` construit maintenant la cible Linux x86_64 et assemble
+une archive de développement. Cette archive ne contient pas de prise en charge
+matérielle active. Le README conserve le prérequis Rust 1.87 ou ultérieur ; la
+version effectivement utilisée devra être relevée lors d'une livraison.
 
 Structure prévue pour une archive Linux :
 

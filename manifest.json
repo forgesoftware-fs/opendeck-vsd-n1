@@ -1,19 +1,13 @@
 {
-  "Name": "Ajazz AKP03 / Mirabox N3",
-  "Description": "Device support plugin for Ajazz AKP03 (+variants)",
-  "Author": "Andrey Viktorov",
+  "Name": "Basicolor N1 / VSD N1",
+  "Description": "Experimental OpenDeck plugin for the Basicolor N1 / VSD N1",
+  "Author": "Forge Software",
   "Version": "0.11.0",
-  "PluginUUID": "st.lynx.plugins.opendeck-akp03",
-  "CodePathLin": "opendeck-akp03-linux",
-  "CodePathMac": "opendeck-akp03-mac",
-  "CodePathWin": "opendeck-akp03-win.exe",
+  "PluginUUID": "com.forgesoftware.plugins.opendeck-vsd-n1",
+  "CodePathLin": "opendeck-vsd-n1-linux",
   "Icon": "assets/icon",
   "Category": "Hardware",
-  "OS": [
-    { "Platform": "linux" },
-    { "Platform": "mac", "MinimumVersion": "11.3" },
-    { "Platform": "windows", "MinimumVersion": "10" }
-  ],
+  "OS": [{ "Platform": "linux" }],
   "Actions": [],
-  "DeviceNamespace": "n3"
+  "DeviceNamespace": "n1"
 }

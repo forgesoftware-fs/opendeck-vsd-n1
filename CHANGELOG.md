@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+
+- Establish the Basicolor N1 / VSD N1 fork identity and Linux-only package.
+- Disable inherited device discovery until each model is qualified in this fork.
+- Add a development udev rule limited to USB `5548:1002`.
+
 ## [0.11.0] - 2026-09-10
 
 ### 🚀 Features

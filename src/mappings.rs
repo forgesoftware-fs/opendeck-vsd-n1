@@ -4,7 +4,7 @@ use mirajazz::{
 };
 
 // Must be unique between all the plugins, 2 characters long and match `DeviceNamespace` field in `manifest.json`
-pub const DEVICE_NAMESPACE: &str = "n3";
+pub const DEVICE_NAMESPACE: &str = "n1";
 
 pub const ROW_COUNT: usize = 3;
 pub const COL_COUNT: usize = 3;
@@ -66,21 +66,10 @@ pub const MSD_TWO_QUERY: DeviceQuery = DeviceQuery::new(65440, 1, MARS_GAMING_VI
 pub const TREASLIN_QUERY: DeviceQuery = DeviceQuery::new(65440, 1, TREASLIN_VID, C_1001_PID);
 pub const REDRAGON_SS551_QUERY: DeviceQuery = DeviceQuery::new(65440, 1, REDRAGON_VID, C_2000_PID);
 
-pub const QUERIES: [DeviceQuery; 13] = [
-    AKP03_QUERY,
-    AKP03E_QUERY,
-    AKP03R_QUERY,
-    AKP03E_REV2_QUERY,
-    AKP03R_REV2_QUERY,
-    N3_6602_1000_QUERY,
-    N3_6602_1002_QUERY,
-    N3_6603_1002_QUERY,
-    N3_6603_1003_QUERY,
-    SOOMFON_SE_QUERY,
-    MSD_TWO_QUERY,
-    TREASLIN_QUERY,
-    REDRAGON_SS551_QUERY,
-];
+// Keep inherited mappings as investigation references, but don't claim those
+// devices alongside the original plugin. Enable queries after qualifying them
+// in this fork. The N1 query must wait for protocol observations as well.
+pub const QUERIES: [DeviceQuery; 0] = [];
 
 impl Kind {
     /// Matches devices VID+PID pairs to correct kinds
