@@ -77,7 +77,8 @@ Il n'établit aucune commande d'initialisation, aucun événement de bouton et a
 format d'image. Lors de ce premier relevé, `lsusb` n'a pas pu initialiser libusb
 dans l'environnement d'analyse (`-99`) et aucun nœud `/dev/hidraw*` n'y était
 exposé ; la lecture sysfs a fourni les descripteurs USB et HID. Les captures
-usbmon C01–C03c décrites ci-dessous ont ensuite été réalisées sur l'hôte Bazzite.
+usbmon C01–C03c et C02b décrites ci-dessous ont ensuite été réalisées sur l'hôte
+Bazzite.
 Le jalon J1 reste ouvert.
 
 ## Première capture usbmon locale du 27 septembre 2026
@@ -146,6 +147,30 @@ Les codes `0x0f` et `0x0d` observés dans ces rapports entrants réapparaissent
 comme cibles d'image dans les trames `BAT` de C03c. Cette coïncidence suggère
 un espace d'identifiants commun, mais ne permet pas d'associer ces deux codes à
 des positions physiques : l'ordre des actions C02 n'a pas été noté.
+
+## Capture de boutons standard locale C02b du 27 septembre 2026
+
+La capture `C02b-button-map-stream.pcapng`, conservée hors du dépôt dans
+`/tmp/opendeck-vsd-n1-captures/`, contient 18 390 paquets sur 25,855723 secondes,
+sans perte signalée. Le N1 `5548:1002` était sur le bus 1 à l'adresse 26 ; cette
+adresse a changé depuis C02. Les rapports HID produits par la séquence d'actions
+sont reçus sur l'interface clavier standard 1, endpoint `0x81` IN.
+
+Cette interface a fourni 17 rapports non nuls de 9 octets, chacun suivi d'un
+rapport de relâchement nul. Les usages de touche capturés, dans leur ordre
+chronologique, sont `53 57 56 5f 60 61 5c 5d 5e 59 5a 5b 62 63 58 55 54`.
+L'opérateur indique avoir parcouru les boutons principaux, puis les boutons du
+haut et enfin la molette ; les positions individuelles n'ont pas été consignées
+avec la trace, et la correspondance de cette séquence avec les gestes reste à
+confirmer.
+
+C02b ne contient ni commande sortante sur l'endpoint interruptif `0x03`, ni
+rapport de données entrant sur `0x82`. Elle ne montre donc pas le trafic
+applicatif `CRT`/`ACK` observé en C02 et ne permet pas de relier ces usages
+clavier aux identifiants `0x0d` et `0x0f` des réponses propriétaires. La capture
+montre un chemin d'entrée distinct ; l'état de connexion de VSD Craft pendant
+ce scénario est maintenant connu : l'opérateur confirme que VSD Craft était
+fermé. L'absence de commandes `CRT` et de réponses `ACK` est donc attendue.
 
 ## Capture d'images locale C03 du 27 septembre 2026
 
@@ -305,6 +330,7 @@ Craft. Pour chaque scénario, noter l'état initial, effectuer une seule opérat
 | C00 / `00-repos.pcapng` | Contrôleur branché, logiciel fermé, puis repos de 30 secondes | Trafic spontané et état de référence |
 | C01 / `01-init.pcapng` | Capturer avant le branchement et le lancement de VSD Craft, puis attendre 45 secondes | Énumération, commandes initiales, réponses et éventuel maintien de connexion |
 | C02 / `02-boutons.pcapng` | Appuyer puis relâcher chaque bouton, cinq fois, avec pauses et positions notées | Codes, états, répétitions, interface utilisée et indexation |
+| C02c / `02c-boutons-vsd-craft.pcapng` | Ouvrir VSD Craft, vérifier que le N1 apparaît, puis capturer un appui-relâchement distinct par commande physique avec positions notées | Relier les réponses `ACK` propriétaires aux boutons et distinguer l'interface de clavier standard |
 | C03 / `03-image.pcapng` | Changer uniquement l'image d'une touche ; alterner deux images distinctes | En-têtes, position, format, découpage, ordre, validation finale et orientation |
 | C04 / `04-luminosite.pcapng` | Si disponible dans VSD Craft, sélectionner trois valeurs distinctes | Commande, échelle et réponse ; noter les valeurs exactes de l'interface |
 | C05 / `05-options.pcapng` | Si présents, isoler appui maintenu, rotation/appui d'encodeur, veille et réveil | Capacités supplémentaires ; subdiviser en un fichier par fonction |
@@ -442,10 +468,10 @@ Produire une table d'analyse avant de choisir la variante :
 
 | Opération | Capture et trames | Interprétation | Correspondance mirajazz | Confirmation matérielle |
 | --- | --- | --- | --- | --- |
-| Initialisation | C01 : énumération et contrôle seulement ; C02 : marqueurs `DIS`, `LIG`, `QUCMD`, `CLE`, `MOD`, `CONNECT` | Plusieurs marqueurs existent dans `mirajazz`; valeur `LIG` et sens de `QUCMD` inconnus | Partielle | Échanges VSD Craft observés, mais initialisation N1 non reproduite |
-| Boutons | C02 : réponses `ACK\0\0OK\0\0`, ID `0x0f`/`0x0d` à l'indice 9 et état `01`/`00` à l'indice 10 | Structure compatible avec le lecteur d'entrée à deux états | Partielle | L'opérateur a vu ces états dans la capture ; positions physiques non consignées |
+| Initialisation | C01 : énumération et contrôle seulement ; C02 : `DIS`, `LIG 00 00 41`, `QUCMD`, `CLE`, `MOD`, `CONNECT` | `DIS` et les commandes connues ont des formes correspondantes ; `LIG` est un réglage à 65 ; `QUCMD` inconnue | Partielle | Échanges VSD Craft observés, mais initialisation OpenDeck non testée |
+| Boutons | C02 : `ACK`, ID `0x0f`/`0x0d` à l'indice 9, état `01`/`00` à l'indice 10 ; C02b : 17 paires clavier sur `0x81`, sans données sur `0x82` | Structure `ACK` compatible avec le lecteur à deux états ; C02b ne mappe pas ces IDs | Partielle | Positions des codes propriétaires C02 non consignées ; VSD Craft était fermé pour C02b ; refaire avec C02c |
 | Image d'une touche | C03c : `BAT`, longueur u16 BE, cible `0x01`, JPEG A/B, puis `STP` | Correspond à `send_image`/`flush`; cible `0x01` reliée à la première case | Forte pour ce parcours | Oui, confirmation de l'opérateur pour A puis B |
-| Luminosité, si disponible | À renseigner | Inconnue | À comparer | Non effectuée |
+| Luminosité, si disponible | C02 : `LIG 00 00 41`, forme `set_brightness(65)` | Forme de commande reconnue ; les valeurs 0–100 sont prises en charge par la bibliothèque | Partielle | Effet physique non mesuré ; aucun changement de niveau comparé |
 
 Une compatibilité démontrée permet de réutiliser la variante concernée. Des écarts
 exigent une adaptation dédiée et des essais ciblés. Si les données restent

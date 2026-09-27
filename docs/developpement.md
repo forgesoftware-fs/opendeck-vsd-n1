@@ -60,7 +60,10 @@ effets physiques de la luminosité et du mode, les tailles JPEG différentes du
 rendu N3 par défaut et les identifiants de bouton que le décodeur actuel ne
 reconnaît pas restent à qualifier. Ces écarts sont détaillés dans
 [l'investigation du protocole](protocole.md) ; aucun comportement du plugin
-OpenDeck n'a été testé sur le N1.
+OpenDeck n'a été testé sur le N1. La capture C02b a relevé 17 paires de rapports
+clavier standard sur l'endpoint `0x81`, sans commande sur `0x03` OUT ni données
+sur `0x82` IN ; VSD Craft était fermé, donc elle ne cartographie pas les codes
+`ACK` de C02. La reprise C02c doit se faire avec le N1 visible dans VSD Craft.
 
 ## Identité du fork
 
@@ -118,7 +121,7 @@ flowchart LR
 | Jalon | Travail | Condition de sortie |
 | --- | --- | --- |
 | J0 — Préparation | Renommer le fork, préserver provenance et licence, adapter l'assemblage | **Configuré** ; valider unicité et import avant diffusion ; aucune annonce de compatibilité N1 |
-| J1 — Observation | Inventorier le N1, capturer initialisation, boutons, image et luminosité disponible | **En cours** : captures C01–C03c et comparaison à `mirajazz 0.16.2` consignées ; restent à faire la cartographie des touches, le décodage des écarts d'initialisation et le relevé de luminosité |
+| J1 — Observation | Inventorier le N1, capturer initialisation, boutons, image et luminosité disponible | **En cours** : captures C01–C03c/C02b et comparaison à `mirajazz 0.16.2` consignées ; restent à faire la cartographie des identifiants `ACK`, l'explication de `QUCMD` et les vérifications physiques des commandes observées |
 | J2 — Prototype boutons | Réaliser une intégration expérimentale isolée ; ouvrir l'interface et transmettre les appuis | Détection unique et correspondance correcte des boutons dans OpenDeck |
 | J3 — Prototype image | Implémenter le format, le découpage et l'envoi observés | Image lisible, orientée et adressée correctement sur une touche |
 | J4 — Livraison Bazzite | Stabiliser reconnexion, archive, règle udev et installation | Recette native réussie et résultat Flatpak documenté séparément |
