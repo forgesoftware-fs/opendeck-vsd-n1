@@ -418,13 +418,14 @@ attribuer une variante complète au N1.
 | Événement entrant | Réponse `ACK`; indices 9 et 10 portent `0f/0d` et `01/00` | Le lecteur de variante à deux états prend ID à l'indice 9 et état à l'indice 10 | Structure compatible ; positions N1 non établies |
 | Format et dimensions | JPEG/JFIF observé ; C03 et C03b décodent du 96 × 96 et du 80 × 80 | Le N3 utilise par défaut JPEG 64 × 64 tourné de 90° | Différence à résoudre avant réemploi du rendu |
 
-`QUCMD 1f 11` reste non documentée. Dans C02 et C03c, les rapports HID extraits
-par Wireshark et les longueurs USB `usb.data_len` observées valent 1 024 octets.
-La source `mirajazz` construit des tampons de 1 025 octets en incluant l'octet
-d'identifiant de rapport nul, alors que la capture USB expose la longueur
-transférée à une couche différente ; il faut vérifier le traitement de cet
-octet par le backend HID avant de comparer ces tailles ou de réutiliser telles
-quelles ses routines d'écriture. Les codes entrants `0x0d` et `0x0f`
+`QUCMD 1f 11` reste non documentée. Dans C02 et C03c, `usb.data_len` et la
+charge utile HID exposée par Wireshark valent 1 024 octets. Le descripteur de
+rapport de l'interface 0, relevé depuis sysfs plus haut, déclare un rapport de
+sortie de 1 024 octets sans identifiant de rapport numéroté. `mirajazz` construit
+un tampon hôte de 1 025 octets : l'octet initial `00` est le numéro de rapport
+exigé par l'API HIDRAW pour un rapport non numéroté ; les 1 024 octets suivants
+constituent le rapport transmis sur USB. Les longueurs observées sont donc
+cohérentes entre l'API hôte et le bus. Les codes entrants `0x0d` et `0x0f`
 ne sont pas acceptés par le décodeur de `src/inputs.rs` actuel. Les identifiants
 de cible d'image observés vont de `0x01` à `0x11`, tandis que seule la cible
 `0x01` a été reliée à une position physique. Ces écarts interdisent encore de
