@@ -145,10 +145,13 @@ consécutifs est une image JPEG/JFIF de 96 × 96 pixels, longue de 2 929 octet
 suivie de remplissage nul dans les 3 072 octets transférés.
 
 Cette capture confirme des données JPEG de 96 × 96 pixels réparties entre
-plusieurs rapports HID, mais pas la correspondance entre les images reconstituées,
-les deux fichiers source choisis et la touche modifiée : leurs noms et les heures
-des changements n'ont pas été consignés. La fréquence des images dans la capture
-ne doit pas être assimilée au nombre d'images source, car des contenus se répètent.
+plusieurs rapports HID. L'opérateur précise que la touche modifiée était la
+première case de la grille VSD Craft, en haut à gauche. Les noms des deux fichiers
+source et les heures des changements ne sont pas connus ; leur accès est compliqué
+par le chemin Windows présenté dans Proton. Le repère de grille ne suffit pas à
+associer les JPEG reconstitués à cette touche ni à un code USB. La fréquence des
+images dans la capture ne doit pas être assimilée au nombre d'images source, car
+des contenus se répètent.
 Le format applicatif complet, le rôle des marqueurs `CRT` observés avec C02 et la
 correspondance des touches restent à déterminer ; J1 reste ouvert.
 
@@ -298,7 +301,7 @@ Produire une table d'analyse avant de choisir la variante :
 | --- | --- | --- | --- | --- |
 | Initialisation | C01, bus 1/adresse 25 : énumération et contrôle seulement ; aucun transfert sur `0x82`/`0x03` | Aucun échange applicatif observé ; état de VSD Craft non consigné | À comparer | Non effectuée |
 | Boutons | C02 : réponses `ACK\0\0OK\0\0` avec codes `0x0f` et `0x0d`, valeurs `01` puis `00` | Paires compatibles avec appui/relâchement ; positions et champs non confirmés | À comparer | Non effectuée |
-| Image d'une touche | C03 : JPEG/JFIF 96 × 96 réassemblé depuis trois rapports de 1 024 octets | Trames JPEG observées ; fichiers source, adresses des touches et sémantique de l'encapsulation non établis | À comparer | Non effectuée |
+| Image d'une touche | C03 : JPEG/JFIF 96 × 96 réassemblé depuis trois rapports de 1 024 octets ; case supérieure gauche ciblée | Trames JPEG observées ; fichiers source, code USB de la touche et sémantique de l'encapsulation non établis | À comparer | Non effectuée |
 | Luminosité, si disponible | À renseigner | Inconnue | À comparer | Non effectuée |
 
 Une compatibilité démontrée permet de réutiliser la variante concernée. Des écarts
