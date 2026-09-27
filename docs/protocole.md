@@ -422,10 +422,11 @@ attribuer une variante complète au N1.
 charge utile HID exposée par Wireshark valent 1 024 octets. Le descripteur de
 rapport de l'interface 0, relevé depuis sysfs plus haut, déclare un rapport de
 sortie de 1 024 octets sans identifiant de rapport numéroté. `mirajazz` construit
-un tampon hôte de 1 025 octets : l'octet initial `00` est le numéro de rapport
-exigé par l'API HIDRAW pour un rapport non numéroté ; les 1 024 octets suivants
-constituent le rapport transmis sur USB. Les longueurs observées sont donc
-cohérentes entre l'API hôte et le bus. Les codes entrants `0x0d` et `0x0f`
+un tampon hôte de 1 025 octets : l'API HIDRAW demande un octet initial `00` pour
+le numéro de rapport, suivi des données. Comme le rapport de cette interface
+n'est pas numéroté, ce préfixe hôte ne fait pas partie des 1 024 octets transmis
+sur USB. Les longueurs observées sont donc cohérentes entre l'API hôte et le
+bus. Les codes entrants `0x0d` et `0x0f`
 ne sont pas acceptés par le décodeur de `src/inputs.rs` actuel. Les identifiants
 de cible d'image observés vont de `0x01` à `0x11`, tandis que seule la cible
 `0x01` a été reliée à une position physique. Ces écarts interdisent encore de
