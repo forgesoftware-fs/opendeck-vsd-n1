@@ -79,6 +79,27 @@ travail (`-99`) ; la lecture sysfs a fourni les descripteurs USB et HID. Aucun
 nœud `/dev/hidraw*` n'est exposé dans cet environnement, donc aucune capture de
 transferts n'a pu être faite ici. Le jalon J1 reste ouvert.
 
+## Première capture usbmon locale du 27 septembre 2026
+
+Une capture réalisée sur l'hôte Bazzite avec `dumpcap` sur `usbmon1` a recueilli
+31 946 paquets, sans perte signalée. Le N1 était sur le bus 001 ; son adresse est
+passée de `024` à `025` après reconnexion. Le fichier brut
+`C01-init-stream.pcapng` a été conservé hors du dépôt, dans
+`/tmp/opendeck-vsd-n1-captures/`.
+
+L'analyse filtrée sur le bus 1 et l'adresse 25 montre les échanges d'énumération
+et de contrôle, mais aucun transfert sur les endpoints candidats de l'interface
+0 (`0x82` IN et `0x03` OUT). Elle ne révèle donc aucune commande applicative.
+L'état de VSD Craft pendant cette capture n'ayant pas été consigné, ce silence
+ne permet pas de conclure si le logiciel était connecté au N1. Vérifier son état
+et provoquer explicitement une action avant d'interpréter une capture silencieuse.
+
+`usbmon1` capture le bus entier. Le fichier brut peut donc contenir du trafic
+d'autres appareils USB ; conserver les originaux localement et filtrer par bus
+et adresse avant de partager un extrait. L'adresse USB peut changer à chaque
+reconnexion. Cette capture ne valide ni l'initialisation applicative, ni les
+événements de bouton, ni le transfert d'image ; le jalon J1 reste ouvert.
+
 ## Dossier de preuves
 
 Créer un dossier de session hors du dépôt pour les captures brutes. Conserver
