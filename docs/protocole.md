@@ -100,6 +100,33 @@ et adresse avant de partager un extrait. L'adresse USB peut changer à chaque
 reconnexion. Cette capture ne valide ni l'initialisation applicative, ni les
 événements de bouton, ni le transfert d'image ; le jalon J1 reste ouvert.
 
+## Capture de boutons locale C02 du 27 septembre 2026
+
+VSD Craft a été lancé avec Proton et l'opérateur confirme qu'il fonctionne avec
+le N1. La version de Proton, le préfixe Wine et l'ordre des actions physiques
+n'ont pas été notés. Une seconde capture sur `usbmon1` a recueilli 61 373 paquets,
+sans perte signalée. Le fichier `C02-buttons-stream.pcapng` reste dans
+`/tmp/opendeck-vsd-n1-captures/`, hors du dépôt.
+
+Filtrée sur le bus 1 et l'adresse 25, cette trace montre le trafic applicatif sur
+l'interface 0 : environ 12 042 transferts sortants de 1 024 octets sur `0x03`,
+ainsi que des réponses entrantes de 512 octets sur `0x82`. Plusieurs rapports
+sortants commencent par `CRT\0\0` et portent notamment les marqueurs ASCII
+`BAT`, `STP`, `CLE`, `LIG`, `QUC`, `MOD`, `DIS` et `CON`. Leur sens reste
+inconnu. Les données comprennent aussi des blocs commençant par la signature
+JPEG/JFIF `ff d8 ff e0` ; leur réassemblage et leur association à une image source
+ne sont pas établis.
+
+Les réponses observées commencent par `ACK\0\0OK\0\0`. Une réponse contient les
+octets `aa ff`. Deux autres codes apparaissent chacun avec les valeurs `01` puis
+`00` : `0f` à environ 40,823 s et 41,043 s, puis `0d` à environ 42,221 s et
+42,401 s depuis le début de la capture. Ces paires sont compatibles avec des
+transitions d'appui et de relâchement, mais les positions physiques n'ont pas
+été consignées et la sémantique des champs n'est pas confirmée. Le trafic
+confirme que VSD Craft sous Proton échange avec l'interface candidate du N1 ; il
+ne suffit pas encore à déterminer les commandes, les identifiants de touches ou
+le format complet des images. Le jalon J1 reste ouvert.
+
 ## Dossier de preuves
 
 Créer un dossier de session hors du dépôt pour les captures brutes. Conserver
