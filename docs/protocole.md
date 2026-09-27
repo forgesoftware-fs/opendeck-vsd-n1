@@ -74,10 +74,11 @@ c0 05 0c 09 01 a1 01 85 02 19 00 2a 3c 02 15 00
 
 Ce relevé établit l'interface HID candidate et les descripteurs de cet exemplaire.
 Il n'établit aucune commande d'initialisation, aucun événement de bouton et aucun
-format d'image. `lsusb` n'a pas pu initialiser libusb dans l'environnement de
-travail (`-99`) ; la lecture sysfs a fourni les descripteurs USB et HID. Aucun
-nœud `/dev/hidraw*` n'est exposé dans cet environnement, donc aucune capture de
-transferts n'a pu être faite ici. Le jalon J1 reste ouvert.
+format d'image. Lors de ce premier relevé, `lsusb` n'a pas pu initialiser libusb
+dans l'environnement d'analyse (`-99`) et aucun nœud `/dev/hidraw*` n'y était
+exposé ; la lecture sysfs a fourni les descripteurs USB et HID. Les captures
+usbmon C01–C03 décrites ci-dessous ont ensuite été réalisées sur l'hôte Bazzite.
+Le jalon J1 reste ouvert.
 
 ## Première capture usbmon locale du 27 septembre 2026
 
