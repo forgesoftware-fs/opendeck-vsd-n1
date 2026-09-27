@@ -77,7 +77,7 @@ Il n'établit aucune commande d'initialisation, aucun événement de bouton et a
 format d'image. Lors de ce premier relevé, `lsusb` n'a pas pu initialiser libusb
 dans l'environnement d'analyse (`-99`) et aucun nœud `/dev/hidraw*` n'y était
 exposé ; la lecture sysfs a fourni les descripteurs USB et HID. Les captures
-usbmon C01–C03 et C03b décrites ci-dessous ont ensuite été réalisées sur l'hôte Bazzite.
+usbmon C01–C03c décrites ci-dessous ont ensuite été réalisées sur l'hôte Bazzite.
 Le jalon J1 reste ouvert.
 
 ## Première capture usbmon locale du 27 septembre 2026
@@ -156,35 +156,60 @@ des contenus se répètent.
 Le format applicatif complet, le rôle des marqueurs `CRT` observés avec C02 et la
 correspondance des touches restent à déterminer ; J1 reste ouvert.
 
-## Reprise d'image locale C03b du 27 septembre 2026
+## Reprise C03b et correction de l'analyse du 27 septembre 2026
 
-Une nouvelle capture sur `usbmon1` a recueilli 148 865 paquets en 43,664 secondes,
-sans perte signalée. Le fichier `C03b-known-images.pcapng` est conservé hors du
-dépôt dans `/tmp/opendeck-vsd-n1-captures/`. Elle cible le bus 1, adresse 25.
-Sur `0x03` OUT, la trace contient 58 919 soumissions et autant de complétions ;
-seules 51 soumissions portent une charge utile, toutes dans les 9,119 premières
-millisecondes. Elles totalisent 52 224 octets.
+La capture `C03b-known-images.pcapng` a recueilli 148 865 paquets en 43,664
+secondes sur `usbmon1`; elle est conservée hors du dépôt dans
+`/tmp/opendeck-vsd-n1-captures/` et cible le bus 1, adresse 25. La première
+analyse ne lisait que `usb.capdata` et avait donc ignoré la plupart des rapports :
+Wireshark expose ici les données HID principalement dans `usbhid.data`.
 
-Ces charges utiles contiennent dix JPEG complets de 96 × 96 pixels, entre 2 891
-et 2 997 octets. Leur aperçu correspond aux icônes déjà présentes dans la grille
-(illustrations, touches colorées et chiffre `1`). Aucun ne correspond aux images
-de référence `N1-test-A.png` et `N1-test-B.png`. Aucun transfert de données sur
-`0x82` IN n'a été observé. Après les dix premières millisecondes, la capture ne
-contient plus de charge utile applicative de l'interface candidate.
+Sur `0x03` OUT, la trace contient 58 919 soumissions et autant de complétions.
+Chaque soumission porte un rapport de 1 024 octets, soit 60 333 056 octets au
+total ; 58 868 rapports sont lus dans `usbhid.data` et les 51 autres dans
+`usb.capdata`. Le réassemblage repère 11 785 JPEG/JFIF complets, dont 9 784
+images de 96 × 96 pixels et 2 001 de 80 × 80 pixels. Les octets donnent 870
+empreintes distinctes ; l'un de ces JPEG distincts n'a pas pu être décodé par
+l'outil d'image.
+Les dix premiers JPEG apparaissent pendant les 9 premières millisecondes, mais
+des transmissions continuent jusqu'à la fin de la capture. L'ancienne conclusion
+« dix images seulement, puis aucun trafic » était donc erronée.
 
-C03b ne confirme donc pas l'envoi des deux nouvelles images : elle documente
-seulement le chargement initial de la grille déjà configurée. L'opérateur précise
-qu'il a uniquement modifié les champs de l'éditeur, sans autre commande. La capture
-d'écran montre l'action « Boîte à Outils : Ouvrir » ; le guide VSD décrit le
-changement d'icône par un autre chemin, clic droit sur la touche puis « Change
-Icon ». C03b n'a donc pas encore testé ce flux et ne permet pas de conclure sur
-l'envoi d'une nouvelle icône au N1. J1 reste ouvert.
+L'opérateur précise avoir uniquement modifié les champs de l'éditeur. La capture
+d'écran montre l'action « Boîte à Outils : Ouvrir », pas le parcours de changement
+d'icône. La relecture des JPEG ne retrouve pas de correspondance convaincante
+avec les rendus A/B identifiés ensuite en C03c. C03b ne permet donc pas d'établir
+si la modification de ces champs déclenche un transfert d'image ; elle ne testait
+pas le parcours « Change Icon ».
 
-## Images de référence pour reprendre C03 sous Proton
+## Changement d'icône local C03c du 27 septembre 2026
 
-Les fichiers choisis pendant C03 n'étant pas connus, les JPEG de cette capture
-ne peuvent pas encore être associés à une source précise. Pour une nouvelle
-capture, deux PNG de référence sont disponibles dans [`test-assets/`](test-assets/) :
+La capture `C03c-icon-change.pcapng`, conservée hors du dépôt dans
+`/tmp/opendeck-vsd-n1-captures/`, contient 115 988 paquets du bus USB 1. Elle
+dure 34,133362 secondes. Sur le N1 à l'adresse 25, endpoint `0x03` OUT, elle
+contient 46 055 soumissions et 46 070 complétions ; chaque soumission transporte
+1 024 octets, soit 47 160 320 octets. L'extraction relève 9 212 marqueurs JPEG
+de début et 9 211 marqueurs de fin ; 9 211 JPEG complets ont été réassemblés,
+dont 9 210 décodés. Les flux complets donnent 870 empreintes SHA-256 distinctes.
+
+Deux JPEG réassemblés correspondent aux images de référence après prise en compte
+du cadrage agrandi et du bandeau de titre visible dans le rendu VSD : l'image A
+est présente dans la trame 30 395 à 10,758222 secondes ; l'image B apparaît dans
+la trame 55 069 à 17,583638 secondes. L'opérateur confirme avoir choisi A puis B
+par « Change Icon » et les avoir vues successivement dans VSD Craft et sur le
+N1. La touche ciblée est la première case, en haut à gauche, selon la capture
+d'écran. C03c confirme donc que ce parcours transmet les images au N1 et modifie
+son affichage.
+
+Cette observation ne décode pas encore le format applicatif autour des JPEG et
+ne relie pas la touche à un code USB. Elle ne valide ni l'initialisation, ni les
+événements de boutons, ni l'intégration OpenDeck ; J1 reste en cours.
+
+## Images de référence utilisées sous Proton
+
+Les fichiers choisis pendant la capture C03 initiale n'étant pas connus, ses
+JPEG ne peuvent pas être associés à une source précise. Deux PNG de référence
+utilisés ensuite en C03c sont disponibles dans [`test-assets/`](test-assets/) :
 
 | Fichier | Dimensions | Repère visuel | SHA-256 |
 | --- | --- | --- | --- |
@@ -198,16 +223,10 @@ ce clone, ouvrir ensuite
 et choisir les fichiers par leur nom exact. Si le dépôt a été déplacé, adapter
 le chemin jusqu'à `docs/test-assets` ; les deux noms restent fixes.
 
-Pour cette reprise, démarrer une nouvelle capture avant tout changement. Sur la
-case supérieure gauche déjà ciblée, faire un clic droit, choisir « Change Icon »
-(ou son libellé traduit), puis choisir `N1-test-A.png` dans le sélecteur. Attendre
-deux secondes après le changement d'icône et noter l'heure. Refaire exactement la
-même opération avec `N1-test-B.png`. Vérifier que l'icône de la touche change dans
-VSD Craft et sur le N1 ; laisser intacte l'action « Ouvrir » et ses champs
-Fichiers/Paramètres. Garder le chemin et le nom de chaque source avec la capture.
-Le guide VSD décrit ce parcours d'icône, mais ne confirme pas le comportement
-d'envoi propre au N1 ; les fichiers facilitent l'identification des JPEG sans
-déduire à eux seuls l'encapsulation ni le code USB de la touche.
+Lors de C03c, le clic droit sur la case supérieure gauche puis « Change Icon » a
+permis de sélectionner A puis B. L'opérateur a confirmé l'affichage successif des
+deux images dans VSD Craft et sur le N1. Le guide VSD décrit ce parcours générique,
+mais ne documente ni l'encapsulation USB ni le comportement propre au N1.
 
 ## Dossier de preuves
 
@@ -355,7 +374,7 @@ Produire une table d'analyse avant de choisir la variante :
 | --- | --- | --- | --- | --- |
 | Initialisation | C01, bus 1/adresse 25 : énumération et contrôle seulement ; aucun transfert sur `0x82`/`0x03` | Aucun échange applicatif observé ; état de VSD Craft non consigné | À comparer | Non effectuée |
 | Boutons | C02 : réponses `ACK\0\0OK\0\0` avec codes `0x0f` et `0x0d`, valeurs `01` puis `00` | Paires compatibles avec appui/relâchement ; positions et champs non confirmés | À comparer | Non effectuée |
-| Image d'une touche | C03 : JPEG/JFIF 96 × 96 réassemblé depuis trois rapports de 1 024 octets ; case supérieure gauche ciblée. C03b : dix JPEG de la grille initiale après modification des champs « Ouvrir » | C03b n'a pas testé « Change Icon » ; code USB de la touche et sémantique de l'encapsulation non établis | À comparer | Non effectuée |
+| Image d'une touche | C03 : JPEG/JFIF 96 × 96 ; C03c : rendus des images A puis B retrouvés dans les JPEG transmis sur `0x03` ; opérateur confirme leur affichage sur le N1 | Parcours « Change Icon » confirmé ; code USB de la touche et encapsulation applicative non établis | À comparer | Oui, confirmation de l'opérateur pour A puis B |
 | Luminosité, si disponible | À renseigner | Inconnue | À comparer | Non effectuée |
 
 Une compatibilité démontrée permet de réutiliser la variante concernée. Des écarts

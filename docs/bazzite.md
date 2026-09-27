@@ -1,10 +1,10 @@
 # Installation et diagnostic sur Bazzite
 
 **Procédure préparatoire, non exécutée pour le plugin OpenDeck sur un N1.** Des
-captures exploratoires C01–C03 et la reprise C03b ont été réalisées sur l'hôte
-Bazzite et sont consignées dans l'investigation du protocole. C03b n'a pas observé
-l'envoi des images de test, car le parcours « Change Icon » n'a pas été utilisé.
-Le dépôt fournit un assemblage Linux et
+captures exploratoires C01–C03c ont été réalisées sur l'hôte Bazzite et sont
+consignées dans l'investigation du protocole. C03c confirme que VSD Craft sous
+Proton envoie les images A puis B par « Change Icon » et que l'opérateur les a
+vues sur le N1. Le dépôt fournit un assemblage Linux et
 `40-opendeck-vsd-n1.rules`, mais ni la règle ni le plugin n'ont passé de recette
 matérielle. Ces captures ne valident pas la procédure d'installation.
 

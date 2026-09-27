@@ -1,10 +1,10 @@
 # Plan de recette du Basicolor N1
 
 **État : aucune recette du plugin OpenDeck exécutée.** Les captures matérielles
-exploratoires C01–C03 et la reprise C03b sont consignées dans l'investigation du
-protocole ; cette dernière n'a pas testé le parcours « Change Icon ». Ces captures
-ne remplacent pas les contrôles d'acceptation ci-dessous et ne constituent pas
-un rapport de compatibilité.
+exploratoires C01–C03c sont consignées dans l'investigation du protocole ; C03c
+confirme le changement d'icône A puis B par VSD Craft et leur affichage sur le N1.
+Cette observation du logiciel constructeur ne remplace pas les contrôles
+d'acceptation ci-dessous et ne constitue pas un rapport de compatibilité du plugin.
 
 ## Conditions et preuves
 
