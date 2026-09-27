@@ -24,8 +24,8 @@ et transmet des données JPEG. C03c identifie les images A puis B dans le trafic
 après le parcours « Change Icon » ; l'opérateur confirme leur affichage sur le
 N1. Le champ cible `0x01` des trames `BAT` correspond à la première case de la
 grille. C02c associe les événements `0x01`–`0x0f` aux touches principales dans
-l'ordre ligne par ligne confirmé par l'opérateur ; `0x1e`, `0x1f` et `0x23`
-suivent pour les trois boutons du haut. Les cibles d'image `0x0f` et `0x0d` sont
+l'ordre ligne par ligne confirmé par l'opérateur ; les boutons du haut donnent,
+de gauche à droite, `0x1e`, `0x1f` et `0x23`. Les cibles d'image `0x0f` et `0x0d` sont
 ainsi reliées aux 15e et 13e touches. C03b concernait les champs de
 l'action « Ouvrir » et sa première analyse avait ignoré la plupart des rapports
 HID. La comparaison au code `mirajazz 0.16.2` montre une structure compatible
@@ -62,8 +62,7 @@ reste à démontrer.
 1. ~~Préparer l'identité du fork et conserver son historique et sa licence.~~ **J0 fait** ; vérifier l'unicité de l'identité avant diffusion.
 2. ~~Relever les interfaces et recueillir les captures initiales.~~ **C01–C03c
    et C02b–C02c faits ; A/B et la cible `0x01` confirmées sur la première case ;
-   ordre des IDs de touches principales confirmé** ; qualifier la molette et
-   compléter les positions physiques des boutons du haut.
+   ordre des IDs des 18 boutons confirmé** ; qualifier la molette.
 3. Établir le protocole, puis réaliser une implémentation expérimentale isolée.
 4. Valider détection, boutons et image sur le N1 avant de l'annoncer compatible.
 5. Préparer l'archive et exécuter la recette Bazzite pour chaque mode d'installation.

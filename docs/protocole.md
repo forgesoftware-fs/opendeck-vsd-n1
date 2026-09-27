@@ -185,8 +185,9 @@ appui/relâchement, avec les IDs `0x01` à `0x0f` et les états `01` puis `00`,
 puis trois paires de même forme pour les IDs `0x1e`, `0x1f` et `0x23`. L'opérateur
 confirme avoir pressé les 15 touches de la grille ligne par ligne, de gauche à
 droite puis de haut en bas. Les IDs `0x01` à `0x0f` correspondent donc à cet
-ordre de lecture. Les trois IDs suivants correspondent aux trois boutons du
-haut dans leur ordre d'action ; leur association gauche/droite reste à noter.
+ordre de lecture. L'opérateur confirme aussi avoir pressé les boutons du haut
+de gauche à droite : `0x1e` correspond au bouton gauche, `0x1f` au bouton du
+centre et `0x23` au bouton droit.
 
 Les huit rapports restants portent tous l'ID `0x33` et l'état `00`, de 26,495 s
 à 27,300 s. Aucun état `01` pour cet ID n'apparaît. La trace ne distingue donc
@@ -491,7 +492,7 @@ Produire une table d'analyse avant de choisir la variante :
 | Opération | Capture et trames | Interprétation | Correspondance mirajazz | Confirmation matérielle |
 | --- | --- | --- | --- | --- |
 | Initialisation | C01 : énumération et contrôle seulement ; C02 : `DIS`, `LIG 00 00 41`, `QUCMD`, `CLE`, `MOD`, `CONNECT` | `DIS` et les commandes connues ont des formes correspondantes ; `LIG` est un réglage à 65 ; `QUCMD` inconnue | Partielle | Échanges VSD Craft observés, mais initialisation OpenDeck non testée |
-| Boutons | C02 : ID `0x0f`/`0x0d` à l'indice 9 ; C02b : 17 paires clavier sur `0x81`, logiciel fermé ; C02c : IDs `0x01`–`0x0f`, `0x1e`, `0x1f`, `0x23` appui/relâchement, puis huit `0x33/00` | Les IDs de grille suivent l'ordre ligne par ligne confirmé ; les trois IDs suivants suivent l'ordre d'action ; le rôle de `0x33` reste indéterminé | Forte pour l'ordre des touches principales, partielle pour le haut, inconnue pour la molette | C02c confirme le chemin `ACK` avec VSD Craft actif ; préciser l'ordre spatial des boutons du haut et séparer clic/rotation |
+| Boutons | C02 : ID `0x0f`/`0x0d` à l'indice 9 ; C02b : 17 paires clavier sur `0x81`, logiciel fermé ; C02c : IDs `0x01`–`0x0f`, `0x1e`, `0x1f`, `0x23` appui/relâchement, puis huit `0x33/00` | IDs de grille ligne par ligne ; IDs des boutons du haut de gauche à droite ; rôle de `0x33` indéterminé | Forte pour les 18 boutons, inconnue pour la molette | C02c confirme le chemin `ACK` avec VSD Craft actif ; isoler le clic et les deux sens de rotation |
 | Image d'une touche | C03c : `BAT`, longueur u16 BE, cible `0x01`, JPEG A/B, puis `STP` | Correspond à `send_image`/`flush`; cible `0x01` reliée à la première case | Forte pour ce parcours | Oui, confirmation de l'opérateur pour A puis B |
 | Luminosité, si disponible | C02 : `LIG 00 00 41`, forme `set_brightness(65)` | Forme de commande reconnue ; les valeurs 0–100 sont prises en charge par la bibliothèque | Partielle | Effet physique non mesuré ; aucun changement de niveau comparé |
 
