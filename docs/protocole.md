@@ -111,22 +111,28 @@ sans perte signalée. Le fichier `C02-buttons-stream.pcapng` reste dans
 
 Filtrée sur le bus 1 et l'adresse 25, cette trace montre le trafic applicatif sur
 l'interface 0 : environ 12 042 transferts sortants de 1 024 octets sur `0x03`,
-ainsi que des réponses entrantes de 512 octets sur `0x82`. Plusieurs rapports
-sortants commencent par `CRT\0\0` et portent notamment les marqueurs ASCII
-`BAT`, `STP`, `CLE`, `LIG`, `QUC`, `MOD`, `DIS` et `CON`. Leur sens reste
-inconnu. Les données comprennent aussi des blocs commençant par la signature
-JPEG/JFIF `ff d8 ff e0` ; leur réassemblage et leur association à une image source
-ne sont pas établis.
+ainsi que des réponses entrantes de 512 octets sur `0x82`. Les rapports sortants
+contiennent les marqueurs `DIS`, `LIG`, `QUCMD`, `BAT`, `STP`, `CLE`, `MOD` et
+`CONNECT`. Les noms `DIS`, `CLE`, `MOD`, `CONNECT`, `BAT` et `STP` correspondent
+à des commandes implémentées dans `mirajazz 0.16.2` ; la comparaison détaillée
+est plus bas. `LIG` apparaît avec un octet `0x41` dans son champ de données,
+dont la signification reste inconnue. La commande `QUCMD` suivie de `1f 11` n'a
+pas été retrouvée dans cette version de la bibliothèque. La capture contient
+aussi des blocs JPEG/JFIF `ff d8 ff e0` ; C03c permettra d'associer deux d'entre
+eux aux images de test.
 
 Les réponses observées commencent par `ACK\0\0OK\0\0`. Une réponse contient les
-octets `aa ff`. Deux autres codes apparaissent chacun avec les valeurs `01` puis
-`00` : `0f` à environ 40,823 s et 41,043 s, puis `0d` à environ 42,221 s et
-42,401 s depuis le début de la capture. Ces paires sont compatibles avec des
-transitions d'appui et de relâchement, mais les positions physiques n'ont pas
-été consignées et la sémantique des champs n'est pas confirmée. Le trafic
-confirme que VSD Craft sous Proton échange avec l'interface candidate du N1 ; il
-ne suffit pas encore à déterminer les commandes, les identifiants de touches ou
-le format complet des images. Le jalon J1 reste ouvert.
+octets `aa ff`. Dans les quatre réponses suivantes, l'octet d'indice 9 vaut
+`0x0f` ou `0x0d`, et celui d'indice 10 vaut successivement `01` puis `00` :
+`0x0f` à environ 40,823 s et 41,043 s, puis `0x0d` à environ 42,221 s et
+42,401 s depuis le début de la capture. Cette disposition correspond à la
+lecture d'entrée de `mirajazz 0.16.2`, qui utilise `data[9]` comme identifiant et
+`data[10]` comme état lorsque la variante prend en charge appui et relâchement.
+Les paires sont compatibles avec ces transitions, mais les positions physiques
+n'ont pas été consignées et les autres champs de la réponse restent à vérifier.
+Le trafic confirme que VSD Craft sous Proton échange avec l'interface candidate
+du N1 ; il ne suffit pas à lui seul à déterminer la disposition ou toutes les
+capacités du N1. Le jalon J1 reste ouvert.
 
 Les codes `0x0f` et `0x0d` observés dans ces rapports entrants réapparaissent
 comme cibles d'image dans les trames `BAT` de C03c. Cette coïncidence suggère
@@ -208,12 +214,21 @@ d'écran. C03c confirme donc que ce parcours transmet les images au N1 et modifi
 son affichage.
 
 Chaque image est précédée d'une trame `BAT`. Dans ces rapports, le marqueur
-`CRT\0\0BAT\0` est suivi d'une longueur JPEG codée sur trois octets en ordre
-réseau, d'une cible d'image sur un octet, puis de `00`. Pour A, la trame 30 393
-porte `00 19 9a 01 00` : longueur `0x199a` (6 554 octets), cible `0x01`, puis
-`00`. Les 6 554 octets JPEG suivants correspondent exactement à la longueur
-annoncée. Pour B, la trame 55 067 porte `00 1b a7 01 00` : longueur `0x1ba7`
-(7 079 octets), même cible `0x01`, et le JPEG suivant fait 7 079 octets.
+`CRT\0\0BAT\0` est suivi d'un octet nul supplémentaire `00`, d'une longueur JPEG sur deux
+octets en ordre réseau (big-endian), d'une cible d'image sur un octet, puis de
+remplissage. Pour A, les cinq octets qui suivent le marqueur sont `00 19 9a 01
+00` : longueur `0x199a` (6 554 octets), cible `0x01`, puis remplissage nul. Les
+6 554 octets JPEG suivants correspondent exactement à la longueur annoncée. Pour
+B, la trame 55 067 porte `00 1b a7 01 00` : longueur `0x1ba7` (7 079 octets),
+même cible `0x01`, et le JPEG suivant fait 7 079 octets. Une trame `STP` suit
+chaque transfert A/B.
+
+Cette structure correspond à l'en-tête construit par la fonction `send_image`
+de `mirajazz 0.16.2` : longueur sur 16 bits big-endian, identifiant de touche
+transmis comme `key + 1`, rapports d'image complétés, puis commande `STP` lors
+de `flush`. Le code de la bibliothèque explique donc la forme des trames
+observées, sans démontrer à lui seul la compatibilité du N1 avec l'initialisation,
+la disposition ou le rendu d'image de cette variante.
 
 Le couple cible `0x01` / première case en haut à gauche est donc établi sur cet
 exemplaire. D'autres valeurs de cible, de `0x02` à `0x11`, apparaissent dans la
@@ -365,7 +380,12 @@ soumission et complétion d'une même URB pour éviter de les compter deux fois.
 
 ## Comparer à mirajazz
 
-La [documentation de mirajazz](https://github.com/4ndv/mirajazz#protocol-versions)
+Le dépôt verrouille `mirajazz 0.16.2`. Les liens vers son
+[code d'envoi et de commandes](https://docs.rs/crate/mirajazz/0.16.2/source/src/device.rs),
+son [lecteur d'événements](https://docs.rs/crate/mirajazz/0.16.2/source/src/state.rs)
+et son [tableau des variantes](https://docs.rs/crate/mirajazz/0.16.2/source/README.md)
+permettent de comparer les octets à la version réellement utilisée. La
+[documentation de mirajazz](https://github.com/4ndv/mirajazz#protocol-versions)
 présente des variantes internes, issues de rétro-ingénierie :
 
 | Variante | Repères documentés à comparer |
@@ -376,8 +396,26 @@ présente des variantes internes, issues de rétro-ingénierie :
 | `3` | Paquets de 1024 octets ; états d'appui et de relâchement ; autres capacités selon le matériel |
 
 Le code local attribue la variante `3` au **TreasLin N3**. Cette correspondance ne
-décide pas celle du N1. Comparer au code de la version `0.16.2` verrouillée dans le
-dépôt, et consigner toute autre version étudiée.
+décide pas celle du N1. Les observations C02/C03c présentent plusieurs
+correspondances de trame avec cette bibliothèque, mais cela ne suffit pas à
+attribuer une variante complète au N1.
+
+| Élément comparé | Observation N1 | Code `mirajazz 0.16.2` | État |
+| --- | --- | --- | --- |
+| Sorties C02 | `DIS`, `CLE`, `MOD`, `CONNECT`, `BAT`, `STP` | Commandes portant ces marqueurs dans `device.rs` | Correspondance des noms ; ordre complet et effets N1 encore à qualifier |
+| Sortie C02 `LIG` | Champ contenant `0x41` | Initialisation générique présente dans la bibliothèque | Valeur et sémantique N1 à comparer en détail |
+| Sortie C02 `QUCMD` | `QUCMD 1f 11` | Non repérée dans le code étudié | Inconnue, à ne pas émettre sans validation |
+| En-tête image | Octet nul supplémentaire `00`, longueur u16 big-endian, cible `01` pour la première case | `send_image` écrit une longueur u16 big-endian et la cible `key + 1` | Correspondance C03c pour la première case |
+| Fin d'image | `STP` après chacune des deux images testées | `flush` envoie `STP` | Correspondance C03c A/B |
+| Événement entrant | Réponse `ACK`; indices 9 et 10 portent `0f/0d` et `01/00` | Le lecteur de variante à deux états prend ID à l'indice 9 et état à l'indice 10 | Structure compatible ; positions N1 non établies |
+| Format et dimensions | JPEG/JFIF observé ; C03 et C03b décodent du 96 × 96 et du 80 × 80 | Le N3 utilise par défaut JPEG 64 × 64 tourné de 90° | Différence à résoudre avant réemploi du rendu |
+
+La capture C02 relève aussi `LIG` deux fois au démarrage et un échange
+`QUCMD 1f 11` qui reste non documenté. Les codes entrants `0x0d` et `0x0f`
+ne sont pas acceptés par le décodeur de `src/inputs.rs` actuel. Les identifiants
+de cible d'image observés vont de `0x01` à `0x11`, tandis que seule la cible
+`0x01` a été reliée à une position physique. Ces écarts interdisent encore de
+réutiliser sans adaptation le décodeur et la configuration du N3.
 
 Pour chaque opération, rapprocher : interface et usage, sens, type de rapport,
 en-tête, opcode, adresse de touche, longueur, charge utile, fragmentation,
@@ -389,9 +427,9 @@ Produire une table d'analyse avant de choisir la variante :
 
 | Opération | Capture et trames | Interprétation | Correspondance mirajazz | Confirmation matérielle |
 | --- | --- | --- | --- | --- |
-| Initialisation | C01, bus 1/adresse 25 : énumération et contrôle seulement ; aucun transfert sur `0x82`/`0x03` | Aucun échange applicatif observé ; état de VSD Craft non consigné | À comparer | Non effectuée |
-| Boutons | C02 : réponses `ACK\0\0OK\0\0` avec codes `0x0f` et `0x0d`, valeurs `01` puis `00` | Paires compatibles avec appui/relâchement ; positions et champs non confirmés | À comparer | Non effectuée |
-| Image d'une touche | C03 : JPEG/JFIF 96 × 96 ; C03c : trames `BAT` annonçant la taille du JPEG et la cible `0x01`, puis JPEG A/B ; opérateur confirme leur affichage sur la première case | Cible `0x01` reliée à la première case ; cibles `0x02`–`0x11` non cartographiées | À comparer | Oui, confirmation de l'opérateur pour A puis B |
+| Initialisation | C01 : énumération et contrôle seulement ; C02 : marqueurs `DIS`, `LIG`, `QUCMD`, `CLE`, `MOD`, `CONNECT` | Plusieurs marqueurs existent dans `mirajazz`; valeur `LIG` et sens de `QUCMD` inconnus | Partielle | Échanges VSD Craft observés, mais initialisation N1 non reproduite |
+| Boutons | C02 : réponses `ACK\0\0OK\0\0`, ID `0x0f`/`0x0d` à l'indice 9 et état `01`/`00` à l'indice 10 | Structure compatible avec le lecteur d'entrée à deux états | Partielle | L'opérateur a vu ces états dans la capture ; positions physiques non consignées |
+| Image d'une touche | C03c : `BAT`, longueur u16 BE, cible `0x01`, JPEG A/B, puis `STP` | Correspond à `send_image`/`flush`; cible `0x01` reliée à la première case | Forte pour ce parcours | Oui, confirmation de l'opérateur pour A puis B |
 | Luminosité, si disponible | À renseigner | Inconnue | À comparer | Non effectuée |
 
 Une compatibilité démontrée permet de réutiliser la variante concernée. Des écarts
