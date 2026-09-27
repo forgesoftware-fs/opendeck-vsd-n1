@@ -127,6 +127,31 @@ confirme que VSD Craft sous Proton échange avec l'interface candidate du N1 ; i
 ne suffit pas encore à déterminer les commandes, les identifiants de touches ou
 le format complet des images. Le jalon J1 reste ouvert.
 
+## Capture d'images locale C03 du 27 septembre 2026
+
+La capture déclarée pour les changements d'image a été faite avec VSD Craft sous
+Proton, sur `usbmon1`, bus 001 et adresse 25. Le fichier
+`C03-images-stream.pcapng`, conservé hors du dépôt dans
+`/tmp/opendeck-vsd-n1-captures/`, fait 454 Mo. `capinfos` y relève environ
+620 000 paquets sur 173,165 secondes.
+
+Le trafic filtré comprend 246 002 rapports sortants de 1 024 octets sur
+l'endpoint `0x03`. Aucun rapport de données entrant sur `0x82` n'a été relevé
+dans ce scénario. Parmi les rapports sortants, 49 206 commencent par la signature
+JPEG/JFIF `ff d8 ff e0`. Leur réassemblage jusqu'au marqueur JPEG de fin a produit
+49 205 images complètes et une image incomplète ; les octets donnent 903 empreintes
+SHA-256 distinctes. Un échantillon reconstitué à partir de trois rapports HID
+consécutifs est une image JPEG/JFIF de 96 × 96 pixels, longue de 2 929 octets,
+suivie de remplissage nul dans les 3 072 octets transférés.
+
+Cette capture confirme des données JPEG de 96 × 96 pixels réparties entre
+plusieurs rapports HID, mais pas la correspondance entre les images reconstituées,
+les deux fichiers source choisis et la touche modifiée : leurs noms et les heures
+des changements n'ont pas été consignés. La fréquence des images dans la capture
+ne doit pas être assimilée au nombre d'images source, car des contenus se répètent.
+Le format applicatif complet, le rôle des marqueurs `CRT` observés avec C02 et la
+correspondance des touches restent à déterminer ; J1 reste ouvert.
+
 ## Dossier de preuves
 
 Créer un dossier de session hors du dépôt pour les captures brutes. Conserver
@@ -271,9 +296,9 @@ Produire une table d'analyse avant de choisir la variante :
 
 | Opération | Capture et trames | Interprétation | Correspondance mirajazz | Confirmation matérielle |
 | --- | --- | --- | --- | --- |
-| Initialisation | À renseigner | Inconnue | À comparer | Non effectuée |
-| Boutons | À renseigner | Inconnue | À comparer | Non effectuée |
-| Image d'une touche | À renseigner | Inconnue | À comparer | Non effectuée |
+| Initialisation | C01, bus 1/adresse 25 : énumération et contrôle seulement ; aucun transfert sur `0x82`/`0x03` | Aucun échange applicatif observé ; état de VSD Craft non consigné | À comparer | Non effectuée |
+| Boutons | C02 : réponses `ACK\0\0OK\0\0` avec codes `0x0f` et `0x0d`, valeurs `01` puis `00` | Paires compatibles avec appui/relâchement ; positions et champs non confirmés | À comparer | Non effectuée |
+| Image d'une touche | C03 : JPEG/JFIF 96 × 96 réassemblé depuis trois rapports de 1 024 octets | Trames JPEG observées ; fichiers source, adresses des touches et sémantique de l'encapsulation non établis | À comparer | Non effectuée |
 | Luminosité, si disponible | À renseigner | Inconnue | À comparer | Non effectuée |
 
 Une compatibilité démontrée permet de réutiliser la variante concernée. Des écarts
