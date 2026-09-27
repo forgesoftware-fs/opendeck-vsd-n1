@@ -17,10 +17,11 @@ Bazzite.
 
 J0, the fork identity and Linux package setup, is in place. A local sysfs
 inventory and exploratory C01–C03 captures identify two HID interfaces, vendor
-traffic and JPEG image data. A C03b replay attempt captured only the existing
-grid images, not the controlled A/B test images. Initialization semantics,
-button-code mapping, image-to-key mapping and OpenDeck integration still need
-validation before enabling discovery or publishing compatibility claims.
+traffic and JPEG image data. C03b changed editor fields but did not test VSD's
+documented custom-icon flow; it captured only the existing grid images.
+Initialization semantics, button-code mapping, image-to-key mapping and OpenDeck
+integration still need validation before enabling discovery or publishing
+compatibility claims.
 
 See the [development and investigation documents](docs/README.md) for the
 scope, protocol capture procedure, Bazzite setup, and acceptance criteria.

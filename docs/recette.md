@@ -2,7 +2,7 @@
 
 **État : aucune recette du plugin OpenDeck exécutée.** Les captures matérielles
 exploratoires C01–C03 et la reprise C03b sont consignées dans l'investigation du
-protocole ; cette dernière n'a pas observé l'envoi des images A/B. Ces captures
+protocole ; cette dernière n'a pas testé le parcours « Change Icon ». Ces captures
 ne remplacent pas les contrôles d'acceptation ci-dessous et ne constituent pas
 un rapport de compatibilité.
 

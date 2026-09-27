@@ -173,10 +173,12 @@ de référence `N1-test-A.png` et `N1-test-B.png`. Aucun transfert de données s
 contient plus de charge utile applicative de l'interface candidate.
 
 C03b ne confirme donc pas l'envoi des deux nouvelles images : elle documente
-seulement le chargement initial de la grille déjà configurée. La trace seule ne
-permet pas de savoir si les sélections A/B ont été appliquées dans VSD Craft ni
-si une commande distincte est nécessaire pour envoyer la configuration. J1 reste
-ouvert.
+seulement le chargement initial de la grille déjà configurée. L'opérateur précise
+qu'il a uniquement modifié les champs de l'éditeur, sans autre commande. La capture
+d'écran montre l'action « Boîte à Outils : Ouvrir » ; le guide VSD décrit le
+changement d'icône par un autre chemin, clic droit sur la touche puis « Change
+Icon ». C03b n'a donc pas encore testé ce flux et ne permet pas de conclure sur
+l'envoi d'une nouvelle icône au N1. J1 reste ouvert.
 
 ## Images de référence pour reprendre C03 sous Proton
 
@@ -197,12 +199,15 @@ et choisir les fichiers par leur nom exact. Si le dépôt a été déplacé, ada
 le chemin jusqu'à `docs/test-assets` ; les deux noms restent fixes.
 
 Pour cette reprise, démarrer une nouvelle capture avant tout changement. Sur la
-case supérieure gauche déjà ciblée, sélectionner A, attendre deux secondes et
-noter l'heure, puis sélectionner B, attendre deux secondes et noter à nouveau
-l'heure. Garder le chemin et le nom de chaque source avec la capture, et vérifier
-l'image affichée dans VSD Craft avant de passer à la suivante. Ces fichiers
-facilitent l'identification et l'orientation des JPEG ; ils ne permettent pas,
-à eux seuls, de déduire l'encapsulation ou le code USB de la touche.
+case supérieure gauche déjà ciblée, faire un clic droit, choisir « Change Icon »
+(ou son libellé traduit), puis choisir `N1-test-A.png` dans le sélecteur. Attendre
+deux secondes après le changement d'icône et noter l'heure. Refaire exactement la
+même opération avec `N1-test-B.png`. Vérifier que l'icône de la touche change dans
+VSD Craft et sur le N1 ; laisser intacte l'action « Ouvrir » et ses champs
+Fichiers/Paramètres. Garder le chemin et le nom de chaque source avec la capture.
+Le guide VSD décrit ce parcours d'icône, mais ne confirme pas le comportement
+d'envoi propre au N1 ; les fichiers facilitent l'identification des JPEG sans
+déduire à eux seuls l'encapsulation ni le code USB de la touche.
 
 ## Dossier de preuves
 
@@ -350,7 +355,7 @@ Produire une table d'analyse avant de choisir la variante :
 | --- | --- | --- | --- | --- |
 | Initialisation | C01, bus 1/adresse 25 : énumération et contrôle seulement ; aucun transfert sur `0x82`/`0x03` | Aucun échange applicatif observé ; état de VSD Craft non consigné | À comparer | Non effectuée |
 | Boutons | C02 : réponses `ACK\0\0OK\0\0` avec codes `0x0f` et `0x0d`, valeurs `01` puis `00` | Paires compatibles avec appui/relâchement ; positions et champs non confirmés | À comparer | Non effectuée |
-| Image d'une touche | C03 : JPEG/JFIF 96 × 96 réassemblé depuis trois rapports de 1 024 octets ; case supérieure gauche ciblée. C03b : dix JPEG initiaux, aucun des deux fichiers tests | Trames JPEG observées ; C03b ne confirme pas l'envoi de A/B ; code USB de la touche et sémantique de l'encapsulation non établis | À comparer | Non effectuée |
+| Image d'une touche | C03 : JPEG/JFIF 96 × 96 réassemblé depuis trois rapports de 1 024 octets ; case supérieure gauche ciblée. C03b : dix JPEG de la grille initiale après modification des champs « Ouvrir » | C03b n'a pas testé « Change Icon » ; code USB de la touche et sémantique de l'encapsulation non établis | À comparer | Non effectuée |
 | Luminosité, si disponible | À renseigner | Inconnue | À comparer | Non effectuée |
 
 Une compatibilité démontrée permet de réutiliser la variante concernée. Des écarts

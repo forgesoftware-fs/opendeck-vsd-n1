@@ -18,6 +18,7 @@ licence conservée est [LICENSE](../LICENSE).
 | [Plugin opendeck-akp03](https://github.com/4ndv/opendeck-akp03) | Provenance, appareils annoncés, installation et construction | Le support du TreasLin N3 ne démontre pas celui du N1 |
 | [Règle udev d'origine](https://github.com/4ndv/opendeck-akp03/blob/main/40-opendeck-akp03.rules) | Exemple d'accès aux périphériques depuis Linux | Les identifiants et le périmètre doivent être adaptés |
 | [Issue VSD N1, Companion, nº 30](https://github.com/bitfocus/companion-surface-mirabox-stream-dock/issues/30) | Relevé USB public pour `5548:1002` et ses deux interfaces HID | Observation d'un autre exemplaire, sans format de commandes établi |
+| [VSDinside : Stream Dock Series Function Guide](https://www.vsdinside.com/es/blogs/tutorial/stream-dock-series-function-guide) | Parcours générique de changement d'icône : clic droit sur une touche, « Change Icon », puis image locale | Ne documente pas la confirmation ni le transfert USB propres au N1 |
 | [Bibliothèque mirajazz](https://github.com/4ndv/mirajazz) | Familles de protocoles et principes de la bibliothèque | Les variantes sont internes ; comparer aussi au code de la version utilisée |
 | [Wireshark : capture USB](https://wiki.wireshark.org/CaptureSetup/USB) | Méthodes USBPcap et usbmon | Le bon bus et les données capturées doivent être vérifiés localement |
 | [Noyau Linux : usbmon](https://docs.kernel.org/usb/usbmon.html) | Nature des traces et interfaces de capture Linux | Une trace incomplète ne décrit pas toute la charge utile |

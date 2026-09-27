@@ -3,7 +3,8 @@
 **Procédure préparatoire, non exécutée pour le plugin OpenDeck sur un N1.** Des
 captures exploratoires C01–C03 et la reprise C03b ont été réalisées sur l'hôte
 Bazzite et sont consignées dans l'investigation du protocole. C03b n'a pas observé
-l'envoi des images de test. Le dépôt fournit un assemblage Linux et
+l'envoi des images de test, car le parcours « Change Icon » n'a pas été utilisé.
+Le dépôt fournit un assemblage Linux et
 `40-opendeck-vsd-n1.rules`, mais ni la règle ni le plugin n'ont passé de recette
 matérielle. Ces captures ne valident pas la procédure d'installation.
 
