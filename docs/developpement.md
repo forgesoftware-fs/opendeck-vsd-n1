@@ -48,22 +48,25 @@ identifie l'interface candidate `0xFFA0:1` et l'interface clavier séparée. C01
 documente l'énumération ; C02–C03c montrent VSD Craft sous Proton échangeant
 avec l'interface candidate, avec des réponses de type `ACK` et des images JPEG.
 C03c confirme le transfert puis l'affichage sur le N1 des images A puis B via
-« Change Icon » et relie la cible `0x01` à la première case. Les valeurs `0x0d`
-et `0x0f` apparaissent aussi dans les réponses de boutons C02 et dans des trames
-image, mais leur position physique reste inconnue. La première analyse de C03b
+« Change Icon » et relie la cible `0x01` à la première case. C02c associe les
+IDs de bouton `0x01`–`0x0f` aux touches de la grille dans l'ordre ligne par ligne
+confirmé par l'opérateur ; les IDs `0x1e`, `0x1f` et `0x23` suivent pour les
+boutons du haut. Les valeurs `0x0d` et `0x0f` apparaissent aussi comme cibles
+d'image, confirmant cet espace d'identifiants commun. La première analyse de C03b
 avait ignoré la plupart des rapports HID ; elle est corrigée dans le relevé de
 protocole. La comparaison au code `mirajazz 0.16.2` relève une structure
 compatible pour les transferts `BAT`/`STP` et les champs d'état `ACK`. Elle
 retrouve aussi les formes des commandes de luminosité à 65 %, d'effacement,
 de mode 3 et de maintien de connexion. `QUCMD 1f 11` reste inexpliquée ; les
 effets physiques de la luminosité et du mode, les tailles JPEG différentes du
-rendu N3 par défaut et les identifiants de bouton que le décodeur actuel ne
-reconnaît pas restent à qualifier. Ces écarts sont détaillés dans
+rendu N3 par défaut, l'ordre spatial des boutons du haut et le rôle de `0x33`
+restent à qualifier. Ces écarts sont détaillés dans
 [l'investigation du protocole](protocole.md) ; aucun comportement du plugin
-OpenDeck n'a été testé sur le N1. La capture C02b a relevé 17 paires de rapports
-clavier standard sur l'endpoint `0x81`, sans commande sur `0x03` OUT ni données
-sur `0x82` IN ; VSD Craft était fermé, donc elle ne cartographie pas les codes
-`ACK` de C02. La reprise C02c doit se faire avec le N1 visible dans VSD Craft.
+OpenDeck n'a été testé sur le N1. C02b a relevé 17 paires de rapports clavier
+standard sur `0x81` lorsque VSD Craft était fermé. C02c relève au contraire les
+événements propriétaires `ACK` avec VSD Craft actif : les IDs principaux et
+ceux des boutons du haut sont identifiés par l'ordre des gestes, mais les huit
+rapports `0x33/00` de l'action finale ne séparent pas clic et rotation.
 
 ## Identité du fork
 
@@ -121,7 +124,7 @@ flowchart LR
 | Jalon | Travail | Condition de sortie |
 | --- | --- | --- |
 | J0 — Préparation | Renommer le fork, préserver provenance et licence, adapter l'assemblage | **Configuré** ; valider unicité et import avant diffusion ; aucune annonce de compatibilité N1 |
-| J1 — Observation | Inventorier le N1, capturer initialisation, boutons, image et luminosité disponible | **En cours** : captures C01–C03c/C02b et comparaison à `mirajazz 0.16.2` consignées ; restent à faire la cartographie des identifiants `ACK`, l'explication de `QUCMD` et les vérifications physiques des commandes observées |
+| J1 — Observation | Inventorier le N1, capturer initialisation, boutons, image et luminosité disponible | **En cours** : captures C01–C03c/C02b–C02c et comparaison à `mirajazz 0.16.2` consignées ; restent à qualifier `0x33`, l'ordre spatial des boutons du haut, `QUCMD` et les effets physiques des commandes |
 | J2 — Prototype boutons | Réaliser une intégration expérimentale isolée ; ouvrir l'interface et transmettre les appuis | Détection unique et correspondance correcte des boutons dans OpenDeck |
 | J3 — Prototype image | Implémenter le format, le découpage et l'envoi observés | Image lisible, orientée et adressée correctement sur une touche |
 | J4 — Livraison Bazzite | Stabiliser reconnexion, archive, règle udev et installation | Recette native réussie et résultat Flatpak documenté séparément |

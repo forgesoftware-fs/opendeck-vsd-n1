@@ -144,9 +144,9 @@ du N1 ; il ne suffit pas à lui seul à déterminer la disposition ou toutes les
 capacités du N1. Le jalon J1 reste ouvert.
 
 Les codes `0x0f` et `0x0d` observés dans ces rapports entrants réapparaissent
-comme cibles d'image dans les trames `BAT` de C03c. Cette coïncidence suggère
-un espace d'identifiants commun, mais ne permet pas d'associer ces deux codes à
-des positions physiques : l'ordre des actions C02 n'a pas été noté.
+comme cibles d'image dans les trames `BAT` de C03c. La capture C02c décrite
+ci-dessous les associe aux 15e et 13e touches de la grille ; les cibles d'image
+et les événements de bouton partagent donc cet espace d'identifiants.
 
 ## Capture de boutons standard locale C02b du 27 septembre 2026
 
@@ -171,6 +171,28 @@ clavier aux identifiants `0x0d` et `0x0f` des réponses propriétaires. La captu
 montre un chemin d'entrée distinct ; l'état de connexion de VSD Craft pendant
 ce scénario est maintenant connu : l'opérateur confirme que VSD Craft était
 fermé. L'absence de commandes `CRT` et de réponses `ACK` est donc attendue.
+
+## Capture de boutons avec VSD Craft C02c du 27 septembre 2026
+
+La capture `C02b-button-map-stream-vsd.pcapng` (nom fourni par l'opérateur),
+conservée dans `/tmp/opendeck-vsd-n1-captures/`, contient 79 471 paquets sur
+30,237566 secondes, sans perte signalée. Le N1 est sur le bus 1 à l'adresse 26.
+Les échanges propriétaires sur `0x03` OUT et `0x82` IN confirment que VSD Craft
+était actif et échangeait avec le contrôleur.
+
+Les 44 rapports `ACK\0\0OK\0\0` non nuls relevés sur `0x82` encodent 15 paires
+appui/relâchement, avec les IDs `0x01` à `0x0f` et les états `01` puis `00`,
+puis trois paires de même forme pour les IDs `0x1e`, `0x1f` et `0x23`. L'opérateur
+confirme avoir pressé les 15 touches de la grille ligne par ligne, de gauche à
+droite puis de haut en bas. Les IDs `0x01` à `0x0f` correspondent donc à cet
+ordre de lecture. Les trois IDs suivants correspondent aux trois boutons du
+haut dans leur ordre d'action ; leur association gauche/droite reste à noter.
+
+Les huit rapports restants portent tous l'ID `0x33` et l'état `00`, de 26,495 s
+à 27,300 s. Aucun état `01` pour cet ID n'apparaît. La trace ne distingue donc
+pas le clic de molette de la rotation et ne révèle pas le sens de rotation. Aucun
+rapport de clavier standard sur `0x81` n'est relevé pendant cette capture avec
+VSD Craft ; cela contraste avec les 17 paires de touches de C02b, logiciel fermé.
 
 ## Capture d'images locale C03 du 27 septembre 2026
 
@@ -330,7 +352,7 @@ Craft. Pour chaque scénario, noter l'état initial, effectuer une seule opérat
 | C00 / `00-repos.pcapng` | Contrôleur branché, logiciel fermé, puis repos de 30 secondes | Trafic spontané et état de référence |
 | C01 / `01-init.pcapng` | Capturer avant le branchement et le lancement de VSD Craft, puis attendre 45 secondes | Énumération, commandes initiales, réponses et éventuel maintien de connexion |
 | C02 / `02-boutons.pcapng` | Appuyer puis relâcher chaque bouton, cinq fois, avec pauses et positions notées | Codes, états, répétitions, interface utilisée et indexation |
-| C02c / `02c-boutons-vsd-craft.pcapng` | Ouvrir VSD Craft, vérifier que le N1 apparaît, puis capturer un appui-relâchement distinct par commande physique avec positions notées | Relier les réponses `ACK` propriétaires aux boutons et distinguer l'interface de clavier standard |
+| C02c / `C02b-button-map-stream-vsd.pcapng` | VSD Craft ouvert et N1 visible ; appuyer une fois sur chaque touche principale ligne par ligne, puis sur les trois boutons du haut et enfin sur la molette | Relier les IDs `ACK` aux positions ; séparer clic et rotation de molette |
 | C03 / `03-image.pcapng` | Changer uniquement l'image d'une touche ; alterner deux images distinctes | En-têtes, position, format, découpage, ordre, validation finale et orientation |
 | C04 / `04-luminosite.pcapng` | Si disponible dans VSD Craft, sélectionner trois valeurs distinctes | Commande, échelle et réponse ; noter les valeurs exactes de l'interface |
 | C05 / `05-options.pcapng` | Si présents, isoler appui maintenu, rotation/appui d'encodeur, veille et réveil | Capacités supplémentaires ; subdiviser en un fichier par fonction |
@@ -469,7 +491,7 @@ Produire une table d'analyse avant de choisir la variante :
 | Opération | Capture et trames | Interprétation | Correspondance mirajazz | Confirmation matérielle |
 | --- | --- | --- | --- | --- |
 | Initialisation | C01 : énumération et contrôle seulement ; C02 : `DIS`, `LIG 00 00 41`, `QUCMD`, `CLE`, `MOD`, `CONNECT` | `DIS` et les commandes connues ont des formes correspondantes ; `LIG` est un réglage à 65 ; `QUCMD` inconnue | Partielle | Échanges VSD Craft observés, mais initialisation OpenDeck non testée |
-| Boutons | C02 : `ACK`, ID `0x0f`/`0x0d` à l'indice 9, état `01`/`00` à l'indice 10 ; C02b : 17 paires clavier sur `0x81`, sans données sur `0x82` | Structure `ACK` compatible avec le lecteur à deux états ; C02b ne mappe pas ces IDs | Partielle | Positions des codes propriétaires C02 non consignées ; VSD Craft était fermé pour C02b ; refaire avec C02c |
+| Boutons | C02 : ID `0x0f`/`0x0d` à l'indice 9 ; C02b : 17 paires clavier sur `0x81`, logiciel fermé ; C02c : IDs `0x01`–`0x0f`, `0x1e`, `0x1f`, `0x23` appui/relâchement, puis huit `0x33/00` | Les IDs de grille suivent l'ordre ligne par ligne confirmé ; les trois IDs suivants suivent l'ordre d'action ; le rôle de `0x33` reste indéterminé | Forte pour l'ordre des touches principales, partielle pour le haut, inconnue pour la molette | C02c confirme le chemin `ACK` avec VSD Craft actif ; préciser l'ordre spatial des boutons du haut et séparer clic/rotation |
 | Image d'une touche | C03c : `BAT`, longueur u16 BE, cible `0x01`, JPEG A/B, puis `STP` | Correspond à `send_image`/`flush`; cible `0x01` reliée à la première case | Forte pour ce parcours | Oui, confirmation de l'opérateur pour A puis B |
 | Luminosité, si disponible | C02 : `LIG 00 00 41`, forme `set_brightness(65)` | Forme de commande reconnue ; les valeurs 0–100 sont prises en charge par la bibliothèque | Partielle | Effet physique non mesuré ; aucun changement de niveau comparé |
 

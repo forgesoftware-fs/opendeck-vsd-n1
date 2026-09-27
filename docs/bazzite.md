@@ -1,7 +1,7 @@
 # Installation et diagnostic sur Bazzite
 
 **Procédure préparatoire, non exécutée pour le plugin OpenDeck sur un N1.** Des
-captures exploratoires C01–C03c et C02b ont été réalisées sur l'hôte Bazzite et
+captures exploratoires C01–C03c et C02b–C02c ont été réalisées sur l'hôte Bazzite et
 sont consignées dans l'investigation du protocole. C03c confirme que VSD Craft
 sous Proton envoie les images A puis B par « Change Icon » et que l'opérateur les
 a vues sur le N1. Le dépôt fournit un assemblage Linux et
